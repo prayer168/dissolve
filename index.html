@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奇妙的溶解 — 互動教材</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Microsoft JhengHei','微軟正黑體',Arial,sans-serif;background:#eef7ff;color:#2c3e50;font-size:16px;line-height:1.75}
+
+/* NAV */
+.nav-wrap{position:sticky;top:0;z-index:100;background:#fff;border-bottom:3px solid #1a8fe3;box-shadow:0 2px 12px rgba(0,0,0,.1)}
+.nav-inner{max-width:940px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none}
+.nav-inner::-webkit-scrollbar{display:none}
+.nav-btn{flex-shrink:0;padding:13px 16px;border:none;background:none;cursor:pointer;font-size:.87em;font-family:inherit;color:#777;border-bottom:3px solid transparent;margin-bottom:-3px;transition:all .2s;white-space:nowrap}
+.nav-btn:hover{color:#1a8fe3;background:#f0f9ff}
+.nav-btn.active{color:#1a8fe3;border-bottom-color:#1a8fe3;font-weight:bold}
+
+/* MAIN */
+.main{max-width:940px;margin:0 auto;padding:28px 18px 70px}
+.section{display:none}
+.section.active{display:block;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION TITLE */
+.sec-title{font-size:1.75em;font-weight:bold;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.sec-sub{color:#777;margin-bottom:24px}
+
+/* NAV ROW */
+.nav-row{display:flex;justify-content:space-between;margin-top:36px}
+.prev-btn,.next-btn{padding:10px 22px;border-radius:22px;cursor:pointer;font-size:.93em;font-family:inherit;transition:all .2s}
+.prev-btn{background:#f0f9ff;color:#1a8fe3;border:2px solid #1a8fe3}
+.prev-btn:hover{background:#e3f2fd}
+.next-btn{background:linear-gradient(135deg,#1a8fe3,#2ed8a0);color:#fff;border:none;box-shadow:0 4px 14px rgba(26,143,227,.3)}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(26,143,227,.4)}
+.invis{visibility:hidden}
+
+/* TIP */
+.tip{background:#fffde7;border:2px solid #ffe082;border-radius:12px;padding:13px 17px;margin:18px 0;font-size:.91em;display:flex;gap:10px;align-items:flex-start}
+
+/* CARD */
+.card{background:#fff;border-radius:16px;padding:22px 24px;box-shadow:0 4px 14px rgba(0,0,0,.07)}
+
+/* ══ START ══ */
+.hero{text-align:center;padding:36px 20px 20px}
+.drop-anim{width:110px;height:110px;background:radial-gradient(circle at 38% 38%,#81d4fa,#0288d1);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;font-size:3em;animation:drip 2.2s ease-in-out infinite;box-shadow:0 8px 28px rgba(2,136,209,.38)}
+@keyframes drip{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-9px) scale(1.06)}}
+.hero h1{font-size:2.4em;background:linear-gradient(135deg,#1a8fe3,#2ed8a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px}
+.hero p{font-size:1em;color:#555;max-width:480px;margin:0 auto 28px}
+.start-cards{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:24px 0}
+.start-card{background:#fff;border-radius:14px;padding:18px 20px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.08);width:150px;cursor:pointer;border:2.5px solid transparent;transition:all .2s}
+.start-card:hover{transform:translateY(-4px);box-shadow:0 8px 22px rgba(0,0,0,.13)}
+.start-card .ci{font-size:2.2em;margin-bottom:8px}
+.start-card .cl{font-size:.87em;color:#555;font-weight:bold;line-height:1.4}
+
+/* ══ GOALS ══ */
+.goal-list{display:flex;flex-direction:column;gap:16px}
+.goal-item{background:#fff;border-radius:14px;padding:20px 24px;display:flex;gap:18px;align-items:flex-start;box-shadow:0 3px 12px rgba(0,0,0,.07);border-left:6px solid;animation:slideIn .5s ease both}
+.goal-item:nth-child(1){border-color:#f5a623;animation-delay:.1s}
+.goal-item:nth-child(2){border-color:#1a8fe3;animation-delay:.2s}
+.goal-item:nth-child(3){border-color:#2ed8a0;animation-delay:.3s}
+@keyframes slideIn{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:translateX(0)}}
+.gi-icon{font-size:2em;flex-shrink:0}
+.gi-title{font-size:1.05em;font-weight:bold;margin-bottom:5px}
+.gi-body{font-size:.91em;color:#666}
+
+/* ══ IDENTIFY ══ */
+.prop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:22px}
+.prop-card{background:#fff;border-radius:13px;padding:16px 12px;text-align:center;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.07);border:2.5px solid transparent;transition:all .2s}
+.prop-card:hover{transform:translateY(-3px);border-color:#aad4f5}
+.prop-card.sel{border-color:#1a8fe3;background:#f0f9ff}
+.prop-card .pi{font-size:2em;margin-bottom:7px}
+.prop-card .pn{font-weight:bold;font-size:.88em}
+.prop-detail{background:#fff;border-left:5px solid #1a8fe3;border-radius:13px;padding:18px 22px;margin-bottom:22px;box-shadow:0 4px 14px rgba(0,0,0,.07);display:none;animation:fadeIn .3s ease}
+.prop-detail h3{color:#1a8fe3;margin-bottom:8px}
+
+.sub-tabs{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+.sub-tab{padding:7px 16px;border-radius:18px;border:2px solid #d0eeff;background:#fff;cursor:pointer;font-size:.88em;font-family:inherit;transition:all .2s}
+.sub-tab:hover{border-color:#1a8fe3}
+.sub-tab.active{background:#1a8fe3;color:#fff;border-color:#1a8fe3}
+.sub-info{background:#fff;border-radius:13px;padding:20px 22px;box-shadow:0 4px 13px rgba(0,0,0,.07);display:none;animation:fadeIn .3s ease}
+.sub-info.active{display:block}
+.sub-props{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.spt{padding:4px 13px;border-radius:18px;font-size:.82em;font-weight:bold}
+
+/* ══ DISSOLVE ══ */
+.formula-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.formula-box{background:#f8f9fa;border-radius:10px;padding:12px 16px;text-align:center;flex:1;min-width:90px}
+.formula-box .fb-icon{font-size:1.7em}
+.formula-box .fb-label{font-size:.78em;font-weight:bold;margin-top:4px}
+.formula-box .fb-desc{font-size:.72em;color:#888;margin-top:3px;line-height:1.4}
+
+.exp-area{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start;margin:16px 0 28px}
+.sub-picker{flex:1;min-width:170px}
+.sub-picker h3{margin-bottom:10px;font-size:.97em}
+.sub-btn{display:block;width:100%;padding:9px 15px;margin-bottom:9px;border-radius:10px;border:2.5px solid #e0e0e0;background:#fff;cursor:pointer;font-size:.93em;font-family:inherit;text-align:left;transition:all .2s}
+.sub-btn:hover{border-color:#1a8fe3;background:#f0f9ff}
+.sub-btn.active{border-color:#1a8fe3;background:#e3f2fd}
+
+.beaker-wrap{flex:1;min-width:190px;display:flex;flex-direction:column;align-items:center}
+.b-lbl{font-size:.82em;color:#888;margin-bottom:7px}
+.beaker{width:175px;height:195px;position:relative;border:4px solid #90caf9;border-top:3px dashed #90caf9;border-radius:4px 4px 20px 20px;overflow:hidden;background:linear-gradient(180deg,rgba(129,212,250,.12) 0%,rgba(79,195,247,.32) 100%)}
+.bsurface{position:absolute;top:0;left:0;right:0;height:3px;background:rgba(79,195,247,.45)}
+.particle{position:absolute;width:10px;height:10px;border-radius:50%;pointer-events:none}
+.exp-result{margin-top:13px;padding:11px 14px;border-radius:10px;font-size:.88em;text-align:center;background:#f8f9fa;width:175px;min-height:54px;line-height:1.5;border:1.5px solid #e0e0e0}
+
+.factors-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-top:10px}
+.f-card{background:#fff;border-radius:15px;padding:20px 18px;box-shadow:0 4px 13px rgba(0,0,0,.07);text-align:center}
+.f-card h3{font-size:.97em;margin-bottom:13px}
+.f-demo{height:88px;display:flex;justify-content:center;align-items:center;margin-bottom:13px;gap:16px}
+.mini-bk{width:58px;height:68px;border:3px solid #90caf9;border-top:2px dashed #90caf9;border-radius:3px 3px 10px 10px;background:rgba(79,195,247,.22);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.mini-lbl{font-size:.72em;color:#555;margin-top:5px}
+.tog-btn{padding:7px 18px;border-radius:18px;border:2px solid #1a8fe3;background:#fff;color:#1a8fe3;cursor:pointer;font-size:.86em;font-family:inherit;transition:all .2s}
+.tog-btn.on{background:#1a8fe3;color:#fff}
+.f-desc{font-size:.82em;color:#666;margin-top:9px;line-height:1.55}
+.stir-rod{width:4px;height:46px;background:#888;border-radius:2px;position:absolute;transform-origin:50% 80%}
+.stir-rod.on{animation:spin .5s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* ══ APPLICATIONS ══ */
+.app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:16px}
+.app-card{height:175px;perspective:600px;cursor:pointer}
+.app-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s}
+.app-card.flipped .app-inner{transform:rotateY(180deg)}
+.app-front,.app-back{position:absolute;width:100%;height:100%;border-radius:15px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;text-align:center}
+.app-front{background:#fff;box-shadow:0 4px 13px rgba(0,0,0,.08);border:2px solid #e3f2fd}
+.app-back{background:linear-gradient(135deg,#1a8fe3,#2ed8a0);color:#fff;transform:rotateY(180deg)}
+.app-front .ai{font-size:2.4em;margin-bottom:8px}
+.app-front .an{font-weight:bold;font-size:.93em}
+.app-front .ah{font-size:.72em;color:#bbb;margin-top:5px}
+.app-back .ae{font-size:.84em;line-height:1.6}
+
+/* ══ QUIZ ══ */
+.q-prog-bar{height:8px;background:#e0e0e0;border-radius:4px;margin-bottom:18px;overflow:hidden}
+.q-prog-fill{height:100%;background:linear-gradient(90deg,#1a8fe3,#2ed8a0);border-radius:4px;transition:width .4s ease}
+.q-lbl{font-size:.83em;color:#888;margin-bottom:7px}
+.q-text{font-size:1.05em;font-weight:bold;margin-bottom:16px;line-height:1.6}
+.q-opts{display:flex;flex-direction:column;gap:9px}
+.q-opt{padding:11px 17px;background:#fff;border:2.5px solid #d0eeff;border-radius:10px;cursor:pointer;font-size:.93em;font-family:inherit;text-align:left;transition:all .2s}
+.q-opt:hover:not(:disabled){border-color:#1a8fe3;background:#f0f9ff}
+.q-opt.correct{border-color:#4caf50;background:#f0fff4;color:#2e7d32}
+.q-opt.wrong{border-color:#f44336;background:#fff5f5;color:#b71c1c}
+.q-opt:disabled{cursor:default}
+.q-fb{margin-top:13px;padding:11px 15px;border-radius:10px;font-size:.9em;line-height:1.55;display:none}
+.q-fb.show{display:block;animation:fadeIn .3s ease}
+.q-fb.ok{background:#f0fff4;color:#2e7d32;border:1.5px solid #a5d6a7}
+.q-fb.bad{background:#fff5f5;color:#c62828;border:1.5px solid #ef9a9a}
+.q-next{margin-top:14px;padding:9px 26px;background:#1a8fe3;color:#fff;border:none;border-radius:18px;cursor:pointer;font-size:.93em;font-family:inherit;display:none}
+.q-next.show{display:inline-block;animation:fadeIn .3s ease}
+.score-box{text-align:center;padding:36px 20px;display:none}
+.score-box.show{display:block;animation:popIn .5s ease}
+@keyframes popIn{from{transform:scale(.82);opacity:0}to{transform:scale(1);opacity:1}}
+.trophy{font-size:4em;margin-bottom:14px}
+.score-num{font-size:2.6em;font-weight:bold;color:#1a8fe3}
+.score-msg{margin-top:9px;font-size:1.05em;color:#555}
+.badges{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.badge{background:linear-gradient(135deg,#f5a623,#f7c948);color:#fff;border-radius:11px;padding:7px 15px;font-size:.82em;font-weight:bold;box-shadow:0 3px 9px rgba(245,166,35,.38)}
+
+@media(max-width:600px){
+  .hero h1{font-size:1.75em}
+  .sec-title{font-size:1.35em}
+  .exp-area{flex-direction:column;align-items:center}
+  .factors-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav-wrap">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="go(0)" id="nb0">🏠 開始</button>
+    <button class="nav-btn" onclick="go(1)" id="nb1">🎯 學習目標</button>
+    <button class="nav-btn" onclick="go(2)" id="nb2">🔬 分辨物質</button>
+    <button class="nav-btn" onclick="go(3)" id="nb3">💧 溶解現象</button>
+    <button class="nav-btn" onclick="go(4)" id="nb4">🧪 溶解應用</button>
+    <button class="nav-btn" onclick="go(5)" id="nb5">🏆 闖關挑戰</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ══════════ 0 START ══════════ -->
+<section id="s0" class="section active">
+  <div class="hero">
+    <div class="drop-anim">💧</div>
+    <h1>奇妙的溶解</h1>
+    <p>把糖放入水中，它慢慢消失了⋯⋯<br>它去哪裡了？讓我們一起探索溶解的秘密！</p>
+  </div>
+  <div class="start-cards">
+    <div class="start-card" onclick="go(2)" style="border-color:#f5a623">
+      <div class="ci">🔬</div><div class="cl">分辨物質<br>的方法</div>
+    </div>
+    <div class="start-card" onclick="go(3)" style="border-color:#1a8fe3">
+      <div class="ci">💧</div><div class="cl">物質在水中<br>溶解了</div>
+    </div>
+    <div class="start-card" onclick="go(4)" style="border-color:#2ed8a0">
+      <div class="ci">🧪</div><div class="cl">溶解的<br>應用</div>
+    </div>
+  </div>
+  <div class="tip"><span>💡</span><span>點選主題卡片或上方導覽列，開始探索！建議從「學習目標」開始，循序漸進。</span></div>
+  <div class="nav-row">
+    <button class="prev-btn invis">‹ 上一頁</button>
+    <button class="next-btn" onclick="go(1)">學習目標 ›</button>
+  </div>
+</section>
+
+<!-- ══════════ 1 GOALS ══════════ -->
+<section id="s1" class="section">
+  <div class="sec-title">🎯 學習目標</div>
+  <div class="sec-sub">學完這個單元，你將能夠……</div>
+  <div class="goal-list">
+    <div class="goal-item">
+      <div class="gi-icon">🔬</div>
+      <div><div class="gi-title">認識分辨物質的方法</div>
+      <div class="gi-body">能利用顏色、氣味、形狀、硬度和溶解性等特徵，分辨生活中常見的物質。</div></div>
+    </div>
+    <div class="goal-item">
+      <div class="gi-icon">💧</div>
+      <div><div class="gi-title">了解物質在水中的溶解現象</div>
+      <div class="gi-body">能說明什麼是溶解，知道哪些物質能溶於水、哪些不能，並了解影響溶解速度的因素。</div></div>
+    </div>
+    <div class="goal-item">
+      <div class="gi-icon">🧪</div>
+      <div><div class="gi-title">認識溶解的生活應用</div>
+      <div class="gi-body">能舉例說明溶解在日常生活中的應用，理解過濾與蒸發的原理與用途。</div></div>
+    </div>
+  </div>
+  <div class="tip" style="margin-top:22px"><span>💡</span><span>這個單元結合觀察、互動實驗和生活應用，讓我們一起動手動腦來學習！</span></div>
+  <div class="nav-row">
+    <button class="prev-btn" onclick="go(0)">‹ 返回首頁</button>
+    <button class="next-btn" onclick="go(2)">分辨物質的方法 ›</button>
+  </div>
+</section>
+
+<!-- ══════════ 2 IDENTIFY ══════════ -->
+<section id="s2" class="section">
+  <div class="sec-title" style="color:#e67e22">🔬 分辨物質的方法</div>
+  <div class="sec-sub">我們可以用哪些方法來分辨不同的物質呢？</div>
+
+  <p style="margin-bottom:14px">科學家觀察物質時，會從各種角度去認識它。<strong>點選下面的特徵卡片</strong>，看看可以怎麼分辨物質！</p>
+
+  <div class="prop-grid">
+    <div class="prop-card" onclick="showProp('color')" id="pc-color"><div class="pi">🎨</div><div class="pn">顏色</div></div>
+    <div class="prop-card" onclick="showProp('smell')" id="pc-smell"><div class="pi">👃</div><div class="pn">氣味</div></div>
+    <div class="prop-card" onclick="showProp('shape')" id="pc-shape"><div class="pi">🔷</div><div class="pn">形狀</div></div>
+    <div class="prop-card" onclick="showProp('hard')"  id="pc-hard" ><div class="pi">💎</div><div class="pn">硬度</div></div>
+    <div class="prop-card" onclick="showProp('sol')"   id="pc-sol"  ><div class="pi">💧</div><div class="pn">溶解性</div></div>
+  </div>
+
+  <div class="prop-detail" id="prop-detail">
+    <h3 id="pd-title"></h3>
+    <p id="pd-body"></p>
+  </div>
+
+  <p style="font-weight:bold;margin:22px 0 10px">🧂 認識常見的物質</p>
+  <p style="font-size:.91em;color:#666;margin-bottom:12px">點選下面的物質名稱，看看它有哪些特徵。</p>
+
+  <div class="sub-tabs">
+    <button class="sub-tab" onclick="showSub(this,'sub-salt')">🧂 食鹽</button>
+    <button class="sub-tab" onclick="showSub(this,'sub-sugar')">🍬 白糖</button>
+    <button class="sub-tab" onclick="showSub(this,'sub-sand')">🏖️ 細沙</button>
+    <button class="sub-tab" onclick="showSub(this,'sub-flour')">🌾 麵粉</button>
+    <button class="sub-tab" onclick="showSub(this,'sub-oil')">🫙 食用油</button>
+  </div>
+
+  <div id="sub-salt" class="sub-info">
+    <strong style="font-size:1.05em">🧂 食鹽（氯化鈉）</strong>
+    <div class="sub-props">
+      <span class="spt" style="background:#fff3e0;color:#e67e22">⬜ 白色</span>
+      <span class="spt" style="background:#e8f5e9;color:#2e7d32">鹹味</span>
+      <span class="spt" style="background:#e3f2fd;color:#1565c0">細小顆粒</span>
+      <span class="spt" style="background:#f3e5f5;color:#6a1b9a">硬度中等</span>
+      <span class="spt" style="background:#e0f7fa;color:#006064">✅ 可溶於水</span>
+    </div>
+    <p style="margin-top:10px;font-size:.88em;color:#555">食鹽放入水中充分攪拌後會溶解，讓水嚐起來有鹹味。溶解後看不見食鹽，但重量不變！</p>
+  </div>
+  <div id="sub-sugar" class="sub-info">
+    <strong style="font-size:1.05em">🍬 白糖（蔗糖）</strong>
+    <div class="sub-props">
+      <span class="spt" style="background:#fff3e0;color:#e67e22">⬜ 白色</span>
+      <span class="spt" style="background:#e8f5e9;color:#2e7d32">甜味</span>
+      <span class="spt" style="background:#e3f2fd;color:#1565c0">細顆粒/粉末</span>
+      <span class="spt" style="background:#f3e5f5;color:#6a1b9a">硬度較低</span>
+      <span class="spt" style="background:#e0f7fa;color:#006064">✅ 可溶於水</span>
+    </div>
+    <p style="margin-top:10px;font-size:.88em;color:#555">白糖外觀和食鹽很像，但嚐起來是甜的。同樣能輕易溶於水，形成甜甜的糖水。</p>
+  </div>
+  <div id="sub-sand" class="sub-info">
+    <strong style="font-size:1.05em">🏖️ 細沙</strong>
+    <div class="sub-props">
+      <span class="spt" style="background:#fff3e0;color:#e67e22">🟡 黃/灰色</span>
+      <span class="spt" style="background:#e8f5e9;color:#2e7d32">無特殊氣味</span>
+      <span class="spt" style="background:#e3f2fd;color:#1565c0">不規則小顆粒</span>
+      <span class="spt" style="background:#f3e5f5;color:#6a1b9a">硬度較高</span>
+      <span class="spt" style="background:#ffebee;color:#b71c1c">❌ 不溶於水</span>
+    </div>
+    <p style="margin-top:10px;font-size:.88em;color:#555">細沙放入水中攪拌後，靜置一段時間就會沉到底部，水也會慢慢變清澈。</p>
+  </div>
+  <div id="sub-flour" class="sub-info">
+    <strong style="font-size:1.05em">🌾 麵粉</strong>
+    <div class="sub-props">
+      <span class="spt" style="background:#fff3e0;color:#e67e22">⬜ 白色</span>
+      <span class="spt" style="background:#e8f5e9;color:#2e7d32">淡淡麥香</span>
+      <span class="spt" style="background:#e3f2fd;color:#1565c0">極細粉末</span>
+      <span class="spt" style="background:#f3e5f5;color:#6a1b9a">硬度極低</span>
+      <span class="spt" style="background:#ffebee;color:#b71c1c">❌ 不溶（會懸浮）</span>
+    </div>
+    <p style="margin-top:10px;font-size:.88em;color:#555">麵粉讓水變得混濁，但並非真正溶解，靜置後會沉澱，可用過濾的方式分離。</p>
+  </div>
+  <div id="sub-oil" class="sub-info">
+    <strong style="font-size:1.05em">🫙 食用油</strong>
+    <div class="sub-props">
+      <span class="spt" style="background:#fff3e0;color:#e67e22">🟡 淡黃色</span>
+      <span class="spt" style="background:#e8f5e9;color:#2e7d32">油脂香味</span>
+      <span class="spt" style="background:#e3f2fd;color:#1565c0">液體</span>
+      <span class="spt" style="background:#f3e5f5;color:#6a1b9a">液態黏稠</span>
+      <span class="spt" style="background:#ffebee;color:#b71c1c">❌ 不溶（浮在上層）</span>
+    </div>
+    <p style="margin-top:10px;font-size:.88em;color:#555">油比水輕，放入水中後浮在表面，怎麼攪拌都不會真正溶解，靜置後又會分層。</p>
+  </div>
+
+  <div class="nav-row">
+    <button class="prev-btn" onclick="go(1)">‹ 學習目標</button>
+    <button class="next-btn" onclick="go(3)">溶解現象 ›</button>
+  </div>
+</section>
+
+<!-- ══════════ 3 DISSOLVE ══════════ -->
+<section id="s3" class="section">
+  <div class="sec-title" style="color:#1a8fe3">💧 物質在水中溶解了</div>
+  <div class="sec-sub">什麼是溶解？讓我們來互動觀察！</div>
+
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:10px">📖 什麼是溶解？</h3>
+    <p>當一種物質（<strong>溶質</strong>）放入液體（<strong>溶劑</strong>）中，均勻分散開來、看不見了，這個過程就叫做<strong>溶解</strong>。溶解後形成的液體叫做<strong>溶液</strong>。</p>
+    <div class="formula-row">
+      <div class="formula-box" style="background:#fff3e0">
+        <div class="fb-icon">🧂</div>
+        <div class="fb-label">溶質</div>
+        <div class="fb-desc">被溶解的物質<br>例：食鹽、糖</div>
+      </div>
+      <div style="display:flex;align-items:center;font-size:1.4em;color:#aaa">＋</div>
+      <div class="formula-box" style="background:#e3f2fd">
+        <div class="fb-icon">💧</div>
+        <div class="fb-label">溶劑</div>
+        <div class="fb-desc">溶解用的液體<br>例：水</div>
+      </div>
+      <div style="display:flex;align-items:center;font-size:1.4em;color:#aaa">＝</div>
+      <div class="formula-box" style="background:#e8f5e9">
+        <div class="fb-icon">🥤</div>
+        <div class="fb-label">溶液</div>
+        <div class="fb-desc">混合後的液體<br>例：鹽水、糖水</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-bottom:12px">🧪 互動實驗：哪些物質能溶於水？</h3>
+  <p style="font-size:.91em;color:#555;margin-bottom:14px"><strong>點選左邊的物質</strong>，放入水中觀察結果！</p>
+
+  <div class="exp-area">
+    <div class="sub-picker">
+      <h3>選擇物質：</h3>
+      <button class="sub-btn" onclick="doExp(this,'salt')">🧂 食鹽</button>
+      <button class="sub-btn" onclick="doExp(this,'sugar')">🍬 白糖</button>
+      <button class="sub-btn" onclick="doExp(this,'sand')">🏖️ 細沙</button>
+      <button class="sub-btn" onclick="doExp(this,'oil')">🫙 食用油</button>
+      <button class="sub-btn" onclick="doExp(this,'baking')">🫧 小蘇打粉</button>
+    </div>
+    <div class="beaker-wrap">
+      <div class="b-lbl">⬇ 加入水中</div>
+      <div class="beaker" id="beaker">
+        <div class="bsurface"></div>
+        <div id="pcon"></div>
+      </div>
+      <div class="exp-result" id="exp-result">← 點選左邊的物質開始實驗</div>
+    </div>
+  </div>
+
+  <h3 style="margin:6px 0 12px">⚡ 影響溶解速度的因素</h3>
+  <p style="font-size:.91em;color:#555;margin-bottom:14px">同樣的物質，有時溶解快、有時慢，點看看下面的互動展示！</p>
+
+  <div class="factors-grid">
+    <!-- Temperature -->
+    <div class="f-card">
+      <h3>🌡️ 水的溫度</h3>
+      <div class="f-demo">
+        <div style="text-align:center">
+          <div class="mini-bk"><span style="font-size:1.1em">🧊</span><div id="cold-dots" style="position:absolute;bottom:6px;width:100%;text-align:center;font-size:.9em">⬛⬛</div></div>
+          <div class="mini-lbl">冷水</div>
+          <div style="font-size:.78em;margin-top:3px" id="cold-spd">🐢 慢</div>
+        </div>
+        <div style="text-align:center">
+          <div class="mini-bk"><span style="font-size:1.1em">🔥</span><div id="hot-dots" style="position:absolute;width:100%;height:100%;top:0;left:0"></div></div>
+          <div class="mini-lbl">熱水</div>
+          <div style="font-size:.78em;margin-top:3px" id="hot-spd">🐢 慢</div>
+        </div>
+      </div>
+      <button class="tog-btn" id="temp-btn" onclick="toggleTemp()">▶ 開始比較</button>
+      <p class="f-desc">水溫越高，糖的溶解速度越快！熱水中的分子運動更快，幫助溶質散開。</p>
+    </div>
+    <!-- Stirring -->
+    <div class="f-card">
+      <h3>🥄 攪拌</h3>
+      <div class="f-demo">
+        <div style="text-align:center">
+          <div class="mini-bk" style="position:relative;overflow:hidden">
+            <div id="srod" class="stir-rod"></div>
+            <div id="sp" style="position:absolute;bottom:4px;width:100%;text-align:center;font-size:1.1em">⬛</div>
+          </div>
+          <div class="mini-lbl" id="s-lbl">靜置中</div>
+        </div>
+      </div>
+      <button class="tog-btn" id="stir-btn" onclick="toggleStir()">▶ 開始攪拌</button>
+      <p class="f-desc">攪拌讓溶質更快均勻分散在水中，大幅加速溶解！</p>
+    </div>
+    <!-- Particle size -->
+    <div class="f-card">
+      <h3>🔬 顆粒大小</h3>
+      <div class="f-demo">
+        <div style="text-align:center">
+          <div style="font-size:1.8em;margin-bottom:5px" id="g-display">🟫</div>
+          <div style="font-size:.75em;color:#666" id="g-lbl">大顆粒</div>
+        </div>
+        <div style="font-size:1.3em;color:#aaa">→</div>
+        <div style="text-align:center">
+          <div style="font-size:.8em;color:#888">溶解速度</div>
+          <div style="font-size:1.5em;margin-top:4px" id="g-spd">🐢</div>
+        </div>
+      </div>
+      <button class="tog-btn" id="grind-btn" onclick="toggleGrind()">▶ 研磨成粉末</button>
+      <p class="f-desc">顆粒越小，與水的接觸面積越大，溶解越快！</p>
+    </div>
+  </div>
+
+  <div class="tip" style="margin-top:18px"><span>💡</span><span>小結：讓物質溶解更快的三個方法——「用熱水」、「攪拌」、「磨成細粉」！</span></div>
+
+  <div class="nav-row">
+    <button class="prev-btn" onclick="go(2)">‹ 分辨物質</button>
+    <button class="next-btn" onclick="go(4)">溶解的應用 ›</button>
+  </div>
+</section>
+
+<!-- ══════════ 4 APPLICATIONS ══════════ -->
+<section id="s4" class="section">
+  <div class="sec-title" style="color:#16a085">🧪 溶解的應用</div>
+  <div class="sec-sub">溶解的原理在生活中無處不在！點選卡片來翻開答案。</div>
+
+  <div class="app-grid">
+    <div class="app-card" onclick="this.classList.toggle('flipped')">
+      <div class="app-inner">
+        <div class="app-front"><div class="ai">🍹</div><div class="an">泡製飲料</div><div class="ah">點我看原理 →</div></div>
+        <div class="app-back"><div class="ae">把糖、果汁粉或咖啡溶入水中攪拌，就成了各種飲料。溶解讓味道均勻分散在每一口水中！</div></div>
+      </div>
+    </div>
+    <div class="app-card" onclick="this.classList.toggle('flipped')">
+      <div class="app-inner">
+        <div class="app-front"><div class="ai">🌊</div><div class="an">海水曬鹽</div><div class="ah">點我看原理 →</div></div>
+        <div class="app-back"><div class="ae">食鹽溶解在海水中。把海水引入鹽田，讓太陽蒸發水分，鹽就留下來了——這叫「蒸發結晶」！</div></div>
+      </div>
+    </div>
+    <div class="app-card" onclick="this.classList.toggle('flipped')">
+      <div class="app-inner">
+        <div class="app-front"><div class="ai">🏊</div><div class="an">游泳池消毒</div><div class="ah">點我看原理 →</div></div>
+        <div class="app-back"><div class="ae">消毒劑溶於水後，藥效均勻分散在整個泳池，能殺死細菌和病毒，讓游泳更安全！</div></div>
+      </div>
+    </div>
+    <div class="app-card" onclick="this.classList.toggle('flipped')">
+      <div class="app-inner">
+        <div class="app-front"><div class="ai">🎨</div><div class="an">染料染色</div><div class="ah">點我看原理 →</div></div>
+        <div class="app-back"><div class="ae">染料溶解在水中，顏色均勻分布，可以用來染衣服或製作各種色彩的手工藝品！</div></div>
+      </div>
+    </div>
+    <div class="app-card" onclick="this.classList.toggle('flipped')">
+      <div class="app-inner">
+        <div class="app-front"><div class="ai">💊</div><div class="an">泡藥服用</div><div class="ah">點我看原理 →</div></div>
+        <div class="app-back"><div class="ae">藥粉溶於水後，藥效更容易被身體吸收，比直接吞藥片更快發揮效果！</div></div>
+      </div>
+    </div>
+    <div class="app-card" onclick="this.classList.toggle('flipped')">
+      <div class="app-inner">
+        <div class="app-front"><div class="ai">🚰</div><div class="an">過濾與淨水</div><div class="ah">點我看原理 →</div></div>
+        <div class="app-back"><div class="ae">不溶於水的雜質（如沙子）可用「過濾」去除；但已溶解的物質（如鹽）需用「蒸發」取回。</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip" style="margin-top:22px"><span>💡</span><span><strong>過濾</strong>去除不溶於水的雜質；<strong>蒸發</strong>從溶液中取回溶質——兩者是不同的分離方法！</span></div>
+
+  <div class="nav-row">
+    <button class="prev-btn" onclick="go(3)">‹ 溶解現象</button>
+    <button class="next-btn" onclick="go(5)">闖關挑戰 ›</button>
+  </div>
+</section>
+
+<!-- ══════════ 5 QUIZ ══════════ -->
+<section id="s5" class="section">
+  <div class="sec-title" style="color:#8e44ad">🏆 闖關挑戰</div>
+  <div class="sec-sub">用 5 個問題測試你的溶解知識，準備好了嗎？</div>
+
+  <div id="quiz-area">
+    <div class="q-prog-bar"><div class="q-prog-fill" id="qprog" style="width:0%"></div></div>
+    <div class="q-lbl" id="qlbl">第 1 題 / 共 5 題</div>
+    <div class="q-text" id="qtext"></div>
+    <div class="q-opts" id="qopts"></div>
+    <div class="q-fb" id="qfb"></div>
+    <button class="q-next" id="qnext" onclick="nextQ()">下一題 ›</button>
+  </div>
+
+  <div class="score-box" id="score-box">
+    <div class="trophy">🏆</div>
+    <div class="score-num" id="snum"></div>
+    <div style="color:#888;font-size:.88em">/ 5 題答對</div>
+    <div class="score-msg" id="smsg"></div>
+    <div class="badges" id="sbadges"></div>
+    <button onclick="resetQ()" style="margin-top:18px;padding:9px 22px;background:#f0f9ff;color:#1a8fe3;border:2px solid #1a8fe3;border-radius:18px;cursor:pointer;font-family:inherit;font-size:.92em">🔄 再挑戰一次</button>
+  </div>
+
+  <div class="nav-row">
+    <button class="prev-btn" onclick="go(4)">‹ 溶解的應用</button>
+    <button class="next-btn invis">下一頁 ›</button>
+  </div>
+</section>
+
+</div><!-- /main -->
+
+<script>
+/* ═══ NAVIGATION ═══ */
+let cur = 0;
+function go(idx) {
+  document.getElementById('s'+cur).classList.remove('active');
+  document.getElementById('nb'+cur).classList.remove('active');
+  cur = idx;
+  document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('nb'+cur).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ═══ PROPERTY CARDS ═══ */
+const propDB = {
+  color:{ title:'🎨 顏色', body:'觀察物質的顏色是最直接的方法。食鹽和白糖都是白色，細沙是黃褐色，食用油是淡黃色。但顏色相同不代表是同一種物質，還需要其他方法確認。' },
+  smell:{ title:'👃 氣味', body:'食鹽幾乎沒有氣味，白糖有淡淡甜香，麵粉有淡淡麥香，食用油有油脂香味。注意：聞氣味時要輕輕用手把氣味扇向鼻子，不要直接對著猛烈吸聞。' },
+  shape:{ title:'🔷 形狀', body:'觀察物質的外觀形狀和狀態（固體、液體）。食鹽是細小立方體晶體，白糖是細顆粒，細沙是不規則小顆粒，食用油是液體。' },
+  hard:{ title:'💎 硬度', body:'用手觸摸感受物質的軟硬程度。食鹽顆粒較硬，白糖稍軟，麵粉非常細緻柔軟，細沙觸感粗糙堅硬。硬度可幫助區分外觀相似的物質。' },
+  sol:{ title:'💧 溶解性', body:'把物質放入水中，觀察是否溶解，是很好的分辨方法。食鹽、白糖、小蘇打粉能溶於水；細沙、麵粉、油脂不能。這個特性叫做「溶解性」。' }
+};
+
+function showProp(key) {
+  Object.keys(propDB).forEach(k => document.getElementById('pc-'+k).classList.toggle('sel', k===key));
+  const d = propDB[key];
+  const el = document.getElementById('prop-detail');
+  el.style.display = 'block';
+  document.getElementById('pd-title').textContent = d.title;
+  document.getElementById('pd-body').textContent = d.body;
+}
+
+/* ═══ SUBSTANCE TABS ═══ */
+function showSub(btn, id) {
+  document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.sub-info').forEach(el => el.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+/* ═══ EXPERIMENT ═══ */
+const expDB = {
+  salt:  { color:'#e0e0e0', dissolves:true,  floats:false, msg:'✅ 食鹽溶解了！食鹽均勻分散在水中，水會變鹹，但看不見食鹽的蹤跡。', bg:'#f0fff4', bc:'#a5d6a7' },
+  sugar: { color:'#f5f0dc', dissolves:true,  floats:false, msg:'✅ 白糖溶解了！糖均勻分散在水中，讓水變成甜甜的糖水。', bg:'#f0fff4', bc:'#a5d6a7' },
+  sand:  { color:'#d4a843', dissolves:false, floats:false, msg:'❌ 細沙沉到底部！細沙不溶於水，靜置後會全部沉澱在杯底。', bg:'#fff5f5', bc:'#ef9a9a' },
+  oil:   { color:'#f5e44a', dissolves:false, floats:true,  msg:'⚠️ 油浮在水面！油比水輕，不溶於水，所以會漂浮在最上層。', bg:'#fffde7', bc:'#ffe082' },
+  baking:{ color:'#ebebeb', dissolves:true,  floats:false, msg:'✅ 小蘇打粉溶解了！它均勻分散在水中，形成透明的溶液。', bg:'#f0fff4', bc:'#a5d6a7' }
+};
+
+function doExp(btn, key) {
+  document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cfg = expDB[key];
+  const con = document.getElementById('pcon');
+  con.innerHTML = '';
+  for (let i = 0; i < 15; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `background:${cfg.color};border:1px solid rgba(0,0,0,.15);left:42%;top:-8%`;
+    setTimeout(() => {
+      con.appendChild(p);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (cfg.dissolves) {
+          const fx = (5 + Math.random()*85)+'%', fy = (10 + Math.random()*75)+'%';
+          p.style.transition = `left ${.9+Math.random()*.8}s ease, top ${.9+Math.random()*.8}s ease, opacity 1.2s ease, width 1.2s, height 1.2s`;
+          p.style.left = fx; p.style.top = fy; p.style.opacity = '.3'; p.style.width = '5px'; p.style.height = '5px';
+        } else if (cfg.floats) {
+          p.style.transition = `left ${.6+Math.random()*.4}s ease, top ${.6+Math.random()*.4}s ease`;
+          p.style.left = (5+Math.random()*85)+'%'; p.style.top = '3%';
+        } else {
+          p.style.transition = `left .4s ease, top ${.7+Math.random()*.5}s ease`;
+          p.style.left = (10+Math.random()*72)+'%'; p.style.top = '84%';
+        }
+      }));
+    }, i * 75);
+  }
+  setTimeout(() => {
+    const r = document.getElementById('exp-result');
+    r.textContent = cfg.msg;
+    r.style.background = cfg.bg;
+    r.style.borderColor = cfg.bc;
+  }, 1500);
+}
+
+/* ═══ FACTORS ═══ */
+let tempOn = false, tempTimer = null;
+function toggleTemp() {
+  tempOn = !tempOn;
+  const btn = document.getElementById('temp-btn');
+  if (tempOn) {
+    btn.textContent = '⏹ 停止'; btn.classList.add('on');
+    document.getElementById('cold-spd').textContent = '🐢 慢';
+    document.getElementById('hot-spd').textContent = '🐇 快！';
+    animHot();
+  } else {
+    btn.textContent = '▶ 開始比較'; btn.classList.remove('on');
+    clearTimeout(tempTimer);
+    document.getElementById('hot-dots').innerHTML = '';
+    document.getElementById('hot-spd').textContent = '🐢 慢';
+  }
+}
+function animHot() {
+  if (!tempOn) return;
+  const c = document.getElementById('hot-dots');
+  c.innerHTML = '';
+  for (let i=0;i<5;i++) {
+    const s = document.createElement('span');
+    s.style.cssText = `position:absolute;font-size:.65em;left:${10+Math.random()*72}%;top:${10+Math.random()*72}%;opacity:.8`;
+    s.textContent = ['🔴','🟡','🟠'][i%3];
+    c.appendChild(s);
+  }
+  tempTimer = setTimeout(animHot, 500);
+}
+
+let stirOn = false;
+function toggleStir() {
+  stirOn = !stirOn;
+  const btn = document.getElementById('stir-btn');
+  const rod = document.getElementById('srod');
+  const sp = document.getElementById('sp');
+  if (stirOn) {
+    btn.textContent = '⏹ 停止攪拌'; btn.classList.add('on');
+    rod.classList.add('on');
+    document.getElementById('s-lbl').textContent = '攪拌中！';
+    setTimeout(() => { if(stirOn) sp.textContent = '·'; }, 700);
+    setTimeout(() => { if(stirOn) sp.textContent = ''; }, 1400);
+  } else {
+    btn.textContent = '▶ 開始攪拌'; btn.classList.remove('on');
+    rod.classList.remove('on');
+    document.getElementById('s-lbl').textContent = '靜置中';
+    sp.textContent = '⬛';
+  }
+}
+
+let groundOn = false;
+function toggleGrind() {
+  groundOn = !groundOn;
+  const btn = document.getElementById('grind-btn');
+  if (groundOn) {
+    btn.textContent = '↩ 恢復大顆粒'; btn.classList.add('on');
+    document.getElementById('g-display').textContent = '·····';
+    document.getElementById('g-display').style.fontSize = '1.1em';
+    document.getElementById('g-lbl').textContent = '細粉末';
+    document.getElementById('g-spd').textContent = '🚀 超快！';
+  } else {
+    btn.textContent = '▶ 研磨成粉末'; btn.classList.remove('on');
+    document.getElementById('g-display').textContent = '🟫';
+    document.getElementById('g-display').style.fontSize = '1.8em';
+    document.getElementById('g-lbl').textContent = '大顆粒';
+    document.getElementById('g-spd').textContent = '🐢';
+  }
+}
+
+/* ═══ QUIZ ═══ */
+const QS = [
+  { q:'食鹽放入水中攪拌後看不見了，這個現象叫做什麼？',
+    opts:['蒸發','溶解','過濾','凝固'], a:1,
+    exp:'食鹽均勻分散在水中看不見的現象就叫做「溶解」。溶解後食鹽並沒有消失，只是分散在水中了！' },
+  { q:'下列哪一種物質放入水中後「不能」溶解？',
+    opts:['食鹽','白糖','小蘇打粉','細沙'], a:3,
+    exp:'細沙不溶於水，放入水中攪拌後靜置，沙子會沉澱到杯底，水也會慢慢變清澈。' },
+  { q:'要讓糖在水中溶解得更快，以下哪個方法最有效？',
+    opts:['加入冰塊','靜置不動','用熱水並攪拌','把糖壓成大塊'], a:2,
+    exp:'「熱水」加上「攪拌」是讓糖最快溶解的方法。熱水提高溫度，攪拌加速分散，效果最佳！' },
+  { q:'把鹽水放在太陽下讓水分蒸發後，容器底部留下的是什麼？',
+    opts:['更多的水','食鹽','細沙','糖'], a:1,
+    exp:'食鹽溶在水中，加熱蒸發讓水分消失後，食鹽就留了下來。這就是「蒸發結晶」，也是海水曬鹽的原理！' },
+  { q:'下列哪一項說明了過濾和溶解的正確關係？',
+    opts:['過濾可以去除溶解在水中的食鹽','溶解在水中的物質可以用過濾取出','不溶於水的雜質可以用過濾去除，但已溶解的物質不能','過濾和溶解是完全相同的方法'], a:2,
+    exp:'過濾只能去除「不溶於水」的雜質（如沙子）。已溶解的食鹽無法用過濾取出，要用蒸發的方式。' }
+];
+let qi = 0, qScore = 0, qDone = false;
+
+function renderQ() {
+  const d = QS[qi];
+  document.getElementById('qlbl').textContent = `第 ${qi+1} 題 / 共 ${QS.length} 題`;
+  document.getElementById('qtext').textContent = d.q;
+  document.getElementById('qprog').style.width = (qi/QS.length*100)+'%';
+  const ol = document.getElementById('qopts');
+  ol.innerHTML = '';
+  ['①','②','③','④'].forEach((lbl,i) => {
+    const b = document.createElement('button');
+    b.className = 'q-opt';
+    b.textContent = lbl + ' ' + d.opts[i];
+    b.onclick = () => ansQ(i);
+    ol.appendChild(b);
+  });
+  document.getElementById('qfb').className = 'q-fb';
+  document.getElementById('qfb').textContent = '';
+  document.getElementById('qnext').className = 'q-next';
+  document.getElementById('qnext').textContent = qi < QS.length-1 ? '下一題 ›' : '查看結果 🏆';
+  qDone = false;
+}
+
+function ansQ(chosen) {
+  if (qDone) return;
+  qDone = true;
+  const d = QS[qi];
+  document.querySelectorAll('.q-opt').forEach((b,i) => {
+    b.disabled = true;
+    if (i === d.a) b.classList.add('correct');
+    else if (i === chosen) b.classList.add('wrong');
+  });
+  const ok = chosen === d.a;
+  if (ok) qScore++;
+  const fb = document.getElementById('qfb');
+  fb.className = 'q-fb show ' + (ok ? 'ok' : 'bad');
+  fb.innerHTML = (ok ? '✅ 答對了！' : '❌ 答錯了！') + '<br>' + d.exp;
+  document.getElementById('qnext').classList.add('show');
+}
+
+function nextQ() {
+  qi++;
+  if (qi >= QS.length) showResult();
+  else renderQ();
+}
+
+function showResult() {
+  document.getElementById('quiz-area').style.display = 'none';
+  const sb = document.getElementById('score-box');
+  sb.classList.add('show');
+  document.getElementById('snum').textContent = qScore;
+  const msgs = ['💪 沒關係！仔細看看解說，再來挑戰！','🙂 還有進步的空間，再複習一下吧！','😊 答得不錯！再試一次就能更完美了！','🎉 非常棒！你幾乎是溶解達人了！','🎊 滿分！你是真正的溶解達人！'];
+  const badges = [['🌱 繼續加油'],['🥉 學習中'],['🥈 優秀'],['🥇 高手','⭐ 優異表現'],['🥇 達人','🌟 完美通關','🏆 知識王']];
+  document.getElementById('smsg').textContent = msgs[qScore];
+  document.getElementById('sbadges').innerHTML = badges[qScore].map(b=>`<div class="badge">${b}</div>`).join('');
+}
+
+function resetQ() {
+  qi = 0; qScore = 0; qDone = false;
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('score-box').classList.remove('show');
+  renderQ();
+}
+
+renderQ();
+</script>
+</body>
+</html>
