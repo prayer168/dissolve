@@ -635,7 +635,7 @@ body{font-family:'Microsoft JhengHei','微軟正黑體',Arial,sans-serif;backgro
 <!-- ══ 5 QUIZ ══ -->
 <section id="s5" class="section">
   <div class="sec-title" style="color:#8e44ad">🏆 闖關挑戰</div>
-  <div class="sec-sub">用 5 個問題測試你的溶解知識，準備好了嗎？</div>
+  <div class="sec-sub">用 10 個問題測試你的溶解知識，準備好了嗎？</div>
 
   <div id="quiz-area">
     <div class="q-prog-bar"><div class="q-prog-fill" id="qprog" style="width:0%"></div></div>
@@ -649,7 +649,7 @@ body{font-family:'Microsoft JhengHei','微軟正黑體',Arial,sans-serif;backgro
   <div class="score-box" id="score-box">
     <span class="trophy">🏆</span>
     <div class="score-num" id="snum"></div>
-    <div style="color:#888;font-size:.88em">/ 5 題答對</div>
+    <div style="color:#888;font-size:.88em">/ 10 題答對</div>
     <div class="score-msg" id="smsg"></div>
     <div class="badges" id="sbadges"></div>
     <button onclick="resetQ()" class="ripple-host" style="margin-top:18px;padding:9px 22px;background:#f0f9ff;color:#1a8fe3;border:2px solid #1a8fe3;border-radius:18px;cursor:pointer;font-family:inherit;font-size:.92em;position:relative;overflow:hidden">🔄 再挑戰一次</button>
@@ -1013,7 +1013,22 @@ const QS = [
     exp:'食鹽溶在水中，加熱蒸發讓水分消失後，食鹽就留了下來。這就是「蒸發結晶」，也是海水曬鹽的原理！' },
   { q:'下列哪一項說明了過濾和溶解的正確關係？',
     opts:['過濾可以去除溶解在水中的食鹽','溶解在水中的物質可以用過濾取出','不溶於水的雜質可以用過濾去除，但已溶解的物質不能','過濾和溶解是完全相同的方法'], a:2,
-    exp:'過濾只能去除「不溶於水」的雜質（如沙子）。已溶解的食鹽無法用過濾取出，要用蒸發的方式。' }
+    exp:'過濾只能去除「不溶於水」的雜質（如沙子）。已溶解的食鹽無法用過濾取出，要用蒸發的方式。' },
+  { q:'食用油放入水中後會發生什麼現象？',
+    opts:['沉到底部','均勻溶解在水中','浮在水面上','立刻凝固'], a:2,
+    exp:'食用油比水輕，且不溶於水，所以會漂浮在水面上。怎麼攪拌都不會真正溶解，靜置後又會分層！' },
+  { q:'溶解後形成的液體叫做什麼？',
+    opts:['溶質','溶劑','溶液','混合物'], a:2,
+    exp:'溶質（被溶解的物質）溶於溶劑（液體）後所形成的均勻液體，叫做「溶液」。例如鹽水、糖水都是溶液！' },
+  { q:'下列哪一個例子是利用「溶解」原理製作的？',
+    opts:['用篩子篩麵粉','把糖溶入水中做飲料','用石頭磨細沙','把油加熱使其變稀'], a:1,
+    exp:'把糖溶入水中是典型的溶解應用。糖均勻分散在水中，讓每一口都有甜味，這就是溶解在生活中的應用！' },
+  { q:'要分辨食鹽和白糖，下列哪個方法最快且最安全？',
+    opts:['看顏色','聞氣味','嚐味道（在老師指導下）','量硬度'], a:2,
+    exp:'在安全的實驗環境和老師指導下，嚐味道是最直接的方法——食鹽是鹹的，白糖是甜的。兩者顏色相同，這樣才能分辨！' },
+  { q:'顆粒越小的物質，溶解速度會如何變化？',
+    opts:['溶解越慢','溶解速度不變','溶解越快','完全不能溶解'], a:2,
+    exp:'顆粒越小，與水的接觸面積越大，水分子能更快地包圍並分散溶質，因此溶解速度越快！把方糖磨成糖粉就能更快溶解。' }
 ];
 let qi = 0, qScore = 0, qAnswered = false;
 
@@ -1067,11 +1082,35 @@ function showResult() {
   const sb = document.getElementById('score-box');
   sb.classList.add('show');
   document.getElementById('snum').textContent = qScore;
-  const msgs = ['💪 沒關係！仔細看看解說，再來挑戰！','🙂 還有進步空間，再複習一下吧！','😊 答得不錯！再試一次就能更完美了！','🎉 非常棒！你幾乎是溶解達人了！','🎊 滿分！你是真正的溶解達人！'];
-  const badges = [['🌱 繼續加油'],['🥉 學習中'],['🥈 優秀'],['🥇 高手','⭐ 優異表現'],['🥇 達人','🌟 完美通關','🏆 知識王']];
+  const msgs = [
+    '💪 繼續加油！仔細看看解說，再來挑戰！',
+    '💪 繼續加油！仔細看看解說，再來挑戰！',
+    '🙂 還有進步空間，再複習一下吧！',
+    '🙂 還有進步空間，再複習一下吧！',
+    '😊 答得不錯！再試一次就能更完美了！',
+    '😊 答得不錯！再試一次就能更完美了！',
+    '🎉 非常棒！你已經掌握大部分知識了！',
+    '🎉 非常棒！你幾乎是溶解達人了！',
+    '🥳 太厲害了！只差一步就完美！',
+    '🎊 超厲害！差一點就滿分了！',
+    '🎊 滿分！你是真正的溶解達人！'
+  ];
+  const badges = [
+    ['🌱 繼續加油'],
+    ['🌱 繼續加油'],
+    ['🥉 學習中'],
+    ['🥉 學習中'],
+    ['🥈 進步中'],
+    ['🥈 優秀'],
+    ['🥇 高手'],
+    ['🥇 高手','⭐ 優異表現'],
+    ['🥇 達人','⭐ 幾乎完美'],
+    ['🥇 達人','🌟 頂尖高手'],
+    ['🥇 達人','🌟 完美通關','🏆 知識王']
+  ];
   document.getElementById('smsg').textContent = msgs[qScore];
   document.getElementById('sbadges').innerHTML = badges[qScore].map((b,i)=>`<div class="badge" style="animation-delay:${i*.12}s">${b}</div>`).join('');
-  if (qScore >= 4) { setTimeout(bigCelebration, 500); }
+  if (qScore >= 8) { setTimeout(bigCelebration, 500); }
 }
 
 function bigCelebration() {
