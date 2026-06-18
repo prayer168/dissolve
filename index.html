@@ -1125,13 +1125,18 @@ function animDrink(key, done) {
     // glass
     ctx.strokeStyle='#90caf9'; ctx.lineWidth=2.5;
     ctx.beginPath(); ctx.moveTo(gx-9,gy); ctx.lineTo(gx,gy); ctx.lineTo(gx-4,gy+gh); ctx.lineTo(gx+gw+4,gy+gh); ctx.lineTo(gx+gw,gy); ctx.lineTo(gx+gw+9,gy); ctx.stroke();
-    // stir rod
-    ctx.save(); ctx.translate(gx+gw/2,gy+gh*0.63); ctx.rotate(angle*Math.PI/180);
+    // stir rod: top fixed above glass, bottom traces a circle (proper stirring)
+    const rad = angle*Math.PI/180;
+    const rodBx = gx+gw/2 + Math.sin(rad)*18;
+    const rodBy = gy+gh*0.82 + Math.cos(rad)*5;
     ctx.strokeStyle='#8d6e63'; ctx.lineWidth=3; ctx.lineCap='round';
-    ctx.beginPath(); ctx.moveTo(0,-gh*0.56); ctx.lineTo(0,gh*0.1); ctx.stroke();
-    ctx.strokeStyle='rgba(79,195,247,0.45)'; ctx.lineWidth=1.5;
-    ctx.beginPath(); ctx.ellipse(0,gh*0.06,13,4,0,0,Math.PI*2); ctx.stroke();
-    ctx.restore(); angle+=8;
+    ctx.beginPath(); ctx.moveTo(gx+gw/2, gy-10); ctx.lineTo(rodBx, rodBy); ctx.stroke();
+    // water swirl ellipse rotating at bottom
+    ctx.save(); ctx.translate(gx+gw/2, gy+gh*0.76); ctx.rotate(rad*1.8);
+    ctx.strokeStyle='rgba(79,195,247,0.5)'; ctx.lineWidth=1.5; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.ellipse(0,0,24,8,0,0,Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]); ctx.restore();
+    angle+=6;
     // sugar particles
     let allDead=true;
     pts.forEach(p=>{
