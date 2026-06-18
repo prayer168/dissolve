@@ -494,29 +494,8 @@ body{font-family:'Microsoft JhengHei','微軟正黑體',Arial,sans-serif;backgro
     <!-- Temperature -->
     <div class="f-card">
       <h3>🌡️ 水的溫度</h3>
-      <div class="f-demo" id="temp-demo">
-        <div style="text-align:center">
-          <div class="mini-bk" id="cold-bk"><span style="font-size:1.1em;position:relative;z-index:1">🧊</span><div id="cold-dots" style="position:absolute;bottom:6px;width:100%;text-align:center;font-size:.9em;z-index:1">⬛⬛</div></div>
-          <div class="mini-lbl">冷水</div>
-          <div class="mini-spd" id="cold-spd">🐢 慢</div>
-        </div>
-        <!-- SVG Thermometer -->
-        <svg width="34" height="90" viewBox="0 0 34 90">
-          <rect x="13" y="6" width="8" height="50" rx="4" fill="#f5f5f5" stroke="#ccc" stroke-width="1.5"/>
-          <rect x="15" y="40" width="4" height="16" rx="2" fill="#f44336" id="therm-fill"/>
-          <circle cx="17" cy="65" r="9" fill="#f44336"/>
-          <circle cx="17" cy="65" r="5" fill="#ff8a80"/>
-          <line x1="21" y1="18" x2="26" y2="18" stroke="#bbb" stroke-width="1.5"/>
-          <line x1="21" y1="28" x2="26" y2="28" stroke="#bbb" stroke-width="1.5"/>
-          <line x1="21" y1="38" x2="26" y2="38" stroke="#bbb" stroke-width="1.5"/>
-          <text x="27" y="12" font-size="7" fill="#e53935">高</text>
-          <text x="27" y="45" font-size="7" fill="#888">低</text>
-        </svg>
-        <div style="text-align:center">
-          <div class="mini-bk" id="hot-bk"><span style="font-size:1.1em;position:relative;z-index:1">🔥</span><div id="hot-dots" style="position:absolute;width:100%;height:100%;top:0;left:0"></div></div>
-          <div class="mini-lbl">熱水</div>
-          <div class="mini-spd" id="hot-spd">🐢 慢</div>
-        </div>
+      <div class="f-demo" style="justify-content:center">
+        <canvas id="cv-temp" width="230" height="108" style="border-radius:8px;background:#f0f9ff;border:1.5px solid #e3f2fd;display:block;max-width:100%"></canvas>
       </div>
       <button class="tog-btn ripple-host" id="temp-btn" onclick="toggleTemp()">▶ 開始比較</button>
       <p class="f-desc">水溫越高，分子運動越快，溶解速度越快！</p>
@@ -525,24 +504,8 @@ body{font-family:'Microsoft JhengHei','微軟正黑體',Arial,sans-serif;backgro
     <!-- Stirring -->
     <div class="f-card">
       <h3>🥄 攪拌</h3>
-      <div class="f-demo">
-        <div style="text-align:center">
-          <div class="mini-bk" style="position:relative;overflow:visible">
-            <!-- SVG stir rod -->
-            <svg width="60" height="72" viewBox="0 0 60 72" style="position:absolute;top:0;left:0;z-index:2;overflow:visible">
-              <g id="stir-g" transform-origin="30 58">
-                <rect x="28" y="4" width="4" height="50" rx="2" fill="#888"/>
-              </g>
-            </svg>
-            <!-- swirl lines -->
-            <svg width="60" height="72" style="position:absolute;top:0;left:0;z-index:1;overflow:hidden" id="swirl-svg">
-              <ellipse id="swirl1" cx="30" cy="55" rx="16" ry="6" fill="none" stroke="rgba(79,195,247,0)" stroke-width="1.5" stroke-dasharray="4 4"/>
-              <ellipse id="swirl2" cx="30" cy="50" rx="10" ry="4" fill="none" stroke="rgba(79,195,247,0)" stroke-width="1.5" stroke-dasharray="3 3"/>
-            </svg>
-            <div id="sp" style="position:absolute;bottom:4px;width:100%;text-align:center;font-size:1.1em;z-index:3">⬛</div>
-          </div>
-          <div class="mini-lbl" id="s-lbl">靜置中</div>
-        </div>
+      <div class="f-demo" style="justify-content:center">
+        <canvas id="cv-stir" width="160" height="108" style="border-radius:8px;background:#f0f9ff;border:1.5px solid #e3f2fd;display:block;max-width:100%"></canvas>
       </div>
       <button class="tog-btn ripple-host" id="stir-btn" onclick="toggleStir()">▶ 開始攪拌</button>
       <p class="f-desc">攪拌讓溶質更快均勻分散，大幅加速溶解！</p>
@@ -551,27 +514,8 @@ body{font-family:'Microsoft JhengHei','微軟正黑體',Arial,sans-serif;backgro
     <!-- Particle size -->
     <div class="f-card">
       <h3>🔬 顆粒大小</h3>
-      <div class="f-demo">
-        <!-- SVG particle size comparison -->
-        <svg id="grind-svg" width="120" height="90" viewBox="0 0 120 90">
-          <!-- large particle -->
-          <circle id="gp1" cx="30" cy="45" r="16" fill="#d4a843" stroke="#c49a3c" stroke-width="2"/>
-          <text x="30" y="49" text-anchor="middle" font-size="9" fill="#fff">大塊</text>
-          <!-- arrow -->
-          <path d="M52,45 L68,45" stroke="#aaa" stroke-width="2" marker-end="url(#arr)"/>
-          <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 Z" fill="#aaa"/></marker></defs>
-          <!-- small particles group (hidden initially) -->
-          <g id="gp-small" opacity="0">
-            <circle cx="80" cy="35" r="5" fill="#d4a843"/>
-            <circle cx="92" cy="38" r="4" fill="#c49a3c"/>
-            <circle cx="86" cy="48" r="5" fill="#d4a843"/>
-            <circle cx="76" cy="50" r="3.5" fill="#c49a3c"/>
-            <circle cx="94" cy="52" r="4" fill="#d4a843"/>
-            <circle cx="84" cy="28" r="3" fill="#c49a3c"/>
-          </g>
-          <!-- speed label -->
-          <text id="grind-lbl" x="60" y="80" text-anchor="middle" font-size="10" fill="#888">溶解：🐢</text>
-        </svg>
+      <div class="f-demo" style="justify-content:center">
+        <canvas id="cv-grain" width="210" height="108" style="border-radius:8px;background:#f0f9ff;border:1.5px solid #e3f2fd;display:block;max-width:100%"></canvas>
       </div>
       <button class="tog-btn ripple-host" id="grind-btn" onclick="toggleGrind()">▶ 研磨成粉末</button>
       <p class="f-desc">顆粒越小，與水的接觸面積越大，溶解越快！</p>
@@ -695,6 +639,7 @@ function go(idx) {
   document.getElementById('nb'+cur).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   if (idx === 0) initBubbles();
+  if (idx === 3) { initTempCanvas(); initStirCanvas(); initGrainCanvas(); }
   if (idx === 4 && !appCanvasesInited) { appCanvasesInited = true; initAppCanvases(); }
 }
 let appCanvasesInited = false;
@@ -878,97 +823,262 @@ drawBeaker();
 /* ══════════════════════════════════════
    SECTION 3: FACTORS
 ══════════════════════════════════════ */
-let tempOn = false, tempTimer = null;
+/* ── Temperature canvas ── */
+let tempOn = false, tempRAF = null;
+
+function _drawBeakerShape(ctx, x, y, w, h, waterColor) {
+  ctx.fillStyle = waterColor;
+  ctx.fillRect(x+2, y+2, w-4, h-4);
+  ctx.strokeStyle = '#90caf9'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x-5,y); ctx.lineTo(x,y); ctx.lineTo(x,y+h); ctx.lineTo(x+w,y+h); ctx.lineTo(x+w,y); ctx.lineTo(x+w+5,y);
+  ctx.stroke();
+}
+
+function initTempCanvas() {
+  const cv = document.getElementById('cv-temp');
+  if (!cv) return;
+  const ctx = cv.getContext('2d'), W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const bw=80, bh=72, by=10;
+  // cold beaker
+  _drawBeakerShape(ctx, 14, by, bw, bh, 'rgba(100,181,246,0.18)');
+  ctx.fillStyle='rgba(179,229,252,0.9)'; ctx.strokeStyle='rgba(100,181,246,0.5)'; ctx.lineWidth=1;
+  ctx.fillRect(14+bw/2-11, by+bh-26, 22, 22); ctx.strokeRect(14+bw/2-11, by+bh-26, 22, 22);
+  ctx.fillStyle='#555'; ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('冷水', 14+bw/2, by+bh+14);
+  ctx.fillStyle='#888'; ctx.font='10px sans-serif'; ctx.fillText('🐢 慢', 14+bw/2, by+bh+28);
+  // hot beaker
+  _drawBeakerShape(ctx, W-14-bw, by, bw, bh, 'rgba(255,138,101,0.14)');
+  ctx.fillStyle='rgba(255,213,79,0.88)'; ctx.strokeStyle='rgba(255,152,0,0.5)'; ctx.lineWidth=1;
+  ctx.fillRect(W-14-bw/2-11, by+bh-26, 22, 22); ctx.strokeRect(W-14-bw/2-11, by+bh-26, 22, 22);
+  ctx.fillStyle='#555'; ctx.font='bold 11px sans-serif';
+  ctx.fillText('熱水', W-14-bw/2, by+bh+14);
+  ctx.fillStyle='#888'; ctx.font='10px sans-serif'; ctx.fillText('🐢 慢', W-14-bw/2, by+bh+28);
+  // thermometer in center
+  _drawTherm(ctx, W/2, by+4, 0);
+}
+
+function _drawTherm(ctx, cx, ty, level) {
+  // level 0=low, 1=high
+  const th=60, tw=8;
+  ctx.fillStyle='#f5f5f5'; ctx.strokeStyle='#ccc'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.roundRect(cx-tw/2, ty, tw, th-14, 4); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#f44336';
+  ctx.beginPath(); ctx.arc(cx, ty+th-6, 9, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(255,138,128,0.7)';
+  ctx.beginPath(); ctx.arc(cx-2, ty+th-9, 4, 0, Math.PI*2); ctx.fill();
+  const fillH = 8 + level*32;
+  ctx.fillStyle='#f44336';
+  ctx.fillRect(cx-2, ty+th-14-fillH+8, 4, fillH);
+  ctx.strokeStyle='#ddd'; ctx.lineWidth=1;
+  for(let i=0;i<3;i++){ctx.beginPath();ctx.moveTo(cx+tw/2,ty+10+i*14);ctx.lineTo(cx+tw/2+5,ty+10+i*14);ctx.stroke();}
+}
 
 function toggleTemp() {
   tempOn = !tempOn;
   const btn = document.getElementById('temp-btn');
-  const fill = document.getElementById('therm-fill');
   if (tempOn) {
     btn.textContent = '⏹ 停止'; btn.classList.add('on');
-    // animate thermometer up
-    fill.setAttribute('y','14'); fill.setAttribute('height','42');
-    document.getElementById('hot-spd').textContent = '🚀 快！';
-    document.getElementById('cold-spd').textContent = '🐢 慢';
-    animHotDots();
+    const cv = document.getElementById('cv-temp');
+    const ctx = cv.getContext('2d'), W = cv.width, H = cv.height;
+    const bw=80, bh=72, by=10;
+    const hbx = W-14-bw;
+    let t=0, cubeW=22, hotPts=[], coldPts=[];
+    function frame() {
+      if (!tempOn) return;
+      ctx.clearRect(0,0,W,H); t++;
+      // cold beaker (cube shrinks very slowly)
+      _drawBeakerShape(ctx, 14, by, bw, bh, 'rgba(100,181,246,0.2)');
+      const cw = Math.max(cubeW - t*0.008, 8);
+      ctx.fillStyle='rgba(179,229,252,0.9)'; ctx.strokeStyle='rgba(100,181,246,0.5)'; ctx.lineWidth=1;
+      ctx.fillRect(14+bw/2-cw/2, by+bh-cw-4, cw, cw); ctx.strokeRect(14+bw/2-cw/2, by+bh-cw-4, cw, cw);
+      if(t%40===0&&coldPts.length<6) coldPts.push({x:14+bw/2+(Math.random()-.5)*cw,y:by+bh-cw-4,vx:(Math.random()-.5)*0.4,vy:-.25-Math.random()*.2,a:.7,r:2});
+      coldPts=coldPts.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.a-=.007;if(p.a>0){ctx.fillStyle=`rgba(100,181,246,${p.a})`;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();return true;}return false;});
+      ctx.fillStyle='#555'; ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('冷水', 14+bw/2, by+bh+14);
+      ctx.fillStyle='#e53935'; ctx.font='bold 10px sans-serif'; ctx.fillText('🐢 慢', 14+bw/2, by+bh+27);
+      // hot beaker (cube shrinks fast)
+      _drawBeakerShape(ctx, hbx, by, bw, bh, 'rgba(255,138,101,0.18)');
+      const hw = Math.max(cubeW - t*0.11, 0);
+      if(hw>0){ctx.fillStyle='rgba(255,213,79,0.88)';ctx.strokeStyle='rgba(255,152,0,0.5)';ctx.lineWidth=1;ctx.fillRect(hbx+bw/2-hw/2,by+bh-hw-4,hw,hw);ctx.strokeRect(hbx+bw/2-hw/2,by+bh-hw-4,hw,hw);}
+      if(t%8===0&&hotPts.length<28) hotPts.push({x:hbx+bw/2+(Math.random()-.5)*Math.max(hw,6),y:by+bh-Math.max(hw,4)-4,vx:(Math.random()-.5)*1.8,vy:-.9-Math.random()*1.1,a:.85,r:2.5});
+      // heat shimmer
+      for(let i=0;i<3;i++){const sx=hbx+12+i*28+Math.sin(t*.1+i)*4,prog=((t*.025)+i*.33)%1,sy=by+bh-prog*52;ctx.strokeStyle=`rgba(255,138,101,${.22*(1-prog)})`;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(sx,by+bh-4);ctx.quadraticCurveTo(sx+8,sy-12,sx,sy);ctx.stroke();}
+      hotPts=hotPts.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.a-=.013;if(p.y<by+2)p.a=0;if(p.a>0){ctx.fillStyle=`rgba(255,152,0,${p.a})`;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();return true;}return false;});
+      ctx.fillStyle='#555'; ctx.font='bold 11px sans-serif';
+      ctx.fillText('熱水', hbx+bw/2, by+bh+14);
+      ctx.fillStyle='#2e7d32'; ctx.font='bold 10px sans-serif'; ctx.fillText('🚀 快！', hbx+bw/2, by+bh+27);
+      // thermometer
+      _drawTherm(ctx, W/2, by+4, Math.min(t/120, 1));
+      tempRAF = requestAnimationFrame(frame);
+    }
+    frame();
   } else {
     btn.textContent = '▶ 開始比較'; btn.classList.remove('on');
-    fill.setAttribute('y','40'); fill.setAttribute('height','16');
-    clearTimeout(tempTimer);
-    document.getElementById('hot-dots').innerHTML = '';
-    document.getElementById('hot-spd').textContent = '🐢 慢';
+    cancelAnimationFrame(tempRAF);
+    initTempCanvas();
   }
 }
 
-function animHotDots() {
-  if (!tempOn) return;
-  const c = document.getElementById('hot-dots');
-  c.innerHTML = '';
-  for (let i=0;i<5;i++) {
-    const s = document.createElement('div');
-    const x = 5 + Math.random()*50, by = 5 + Math.random()*40;
-    s.style.cssText = `position:absolute;left:${x}%;bottom:${by}%;width:6px;height:6px;border-radius:50%;background:${['#ef5350','#ff9800','#ffeb3b'][i%3]};animation:riseUp ${.8+Math.random()*.5}s ease-out both`;
-    c.appendChild(s);
-  }
-  tempTimer = setTimeout(animHotDots, 700);
-}
-
+/* ── Stirring canvas ── */
 let stirOn = false, stirRAF2 = null, stirAngle = 0;
+const stirPts = [];
+
+function initStirCanvas() {
+  const cv = document.getElementById('cv-stir');
+  if (!cv) return;
+  const ctx = cv.getContext('2d'), W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  _drawStirScene(ctx, W, H, 0, [{x:W/2-10,y:H-28,vx:0,vy:0,a:1,r:4,settled:true},{x:W/2,y:H-24,vx:0,vy:0,a:1,r:4,settled:true},{x:W/2+10,y:H-28,vx:0,vy:0,a:1,r:4,settled:true}], false);
+}
+
+function _drawStirScene(ctx, W, H, rodAngle, pts, isStirring) {
+  const bx=W/2-36, bw=72, by=14, bh=82;
+  // water
+  ctx.fillStyle = isStirring ? 'rgba(79,195,247,0.28)' : 'rgba(100,181,246,0.18)';
+  ctx.fillRect(bx+2, by+2, bw-4, bh-4);
+  // cube at bottom if not fully dissolved
+  const settled = pts.filter(p=>p.settled);
+  if(settled.length > 0) {
+    const cw = 8+settled.length*4;
+    ctx.fillStyle='rgba(255,213,79,0.88)'; ctx.strokeStyle='rgba(255,152,0,0.5)'; ctx.lineWidth=1;
+    ctx.fillRect(bx+bw/2-cw/2, by+bh-cw-4, cw, cw); ctx.strokeRect(bx+bw/2-cw/2, by+bh-cw-4, cw, cw);
+  }
+  // floating particles
+  pts.filter(p=>!p.settled).forEach(p=>{
+    ctx.fillStyle=`rgba(255,183,77,${p.a})`; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+  });
+  // swirl ring
+  if(isStirring){
+    ctx.save(); ctx.translate(bx+bw/2, by+bh-16);
+    ctx.strokeStyle='rgba(79,195,247,0.5)'; ctx.lineWidth=1.5; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.ellipse(0,0,22,8,0,0,Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+  // glass outline
+  ctx.strokeStyle='#90caf9'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(bx-6,by); ctx.lineTo(bx,by); ctx.lineTo(bx,by+bh); ctx.lineTo(bx+bw,by+bh); ctx.lineTo(bx+bw,by); ctx.lineTo(bx+bw+6,by); ctx.stroke();
+  // stir rod
+  ctx.save(); ctx.translate(bx+bw/2, by+bh*0.65); ctx.rotate(rodAngle*Math.PI/180);
+  ctx.strokeStyle='#795548'; ctx.lineWidth=3.5; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(0,-bh*0.58); ctx.lineTo(0,bh*0.1); ctx.stroke();
+  ctx.restore();
+  // label
+  ctx.fillStyle='#555'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center';
+  ctx.fillText(isStirring ? '攪拌中！' : '靜置中', W/2, H-4);
+}
+
 function toggleStir() {
   stirOn = !stirOn;
   const btn = document.getElementById('stir-btn');
-  const sp = document.getElementById('sp');
-  const swirl1 = document.getElementById('swirl1');
-  const swirl2 = document.getElementById('swirl2');
-  const sg = document.getElementById('stir-g');
   if (stirOn) {
     btn.textContent = '⏹ 停止攪拌'; btn.classList.add('on');
-    document.getElementById('s-lbl').textContent = '攪拌中！';
-    swirl1.setAttribute('stroke','rgba(79,195,247,0.6)');
-    swirl2.setAttribute('stroke','rgba(79,195,247,0.5)');
-    function rotateRod() {
+    stirPts.length = 0;
+    stirPts.push({x:80-10,y:96-24,vx:0,vy:0,a:1,r:4,settled:true},{x:80,y:96-20,vx:0,vy:0,a:1,r:4,settled:true},{x:80+10,y:96-24,vx:0,vy:0,a:1,r:4,settled:true});
+    const cv = document.getElementById('cv-stir');
+    const ctx = cv.getContext('2d'), W = cv.width, H = cv.height;
+    let t=0;
+    function frame() {
       if (!stirOn) return;
-      stirAngle = (stirAngle + 8) % 360;
-      sg.setAttribute('transform',`rotate(${stirAngle},30,58)`);
-      stirRAF2 = requestAnimationFrame(rotateRod);
+      ctx.clearRect(0,0,W,H); t++;
+      stirAngle = (stirAngle+9)%360;
+      const bx=W/2-36, bw=72, by=14, bh=82;
+      // release settled particles every 40 frames
+      if(t%40===0){const s=stirPts.find(p=>p.settled);if(s){s.settled=false;s.x=bx+bw/2+(Math.random()-.5)*16;s.y=by+bh-16;s.vx=(Math.random()-.5)*2.5;s.vy=-1-Math.random();}}
+      // move floating particles in swirl
+      stirPts.filter(p=>!p.settled).forEach(p=>{
+        const dx=p.x-(bx+bw/2),dy=p.y-(by+bh/2);
+        p.vx += -dy*.012 - dx*.008;
+        p.vy += dx*.012 - dy*.008;
+        p.x+=p.vx; p.y+=p.vy;
+        p.vx*=0.97; p.vy*=0.97;
+        p.x=Math.max(bx+4,Math.min(bx+bw-4,p.x));
+        p.y=Math.max(by+4,Math.min(by+bh-4,p.y));
+      });
+      _drawStirScene(ctx, W, H, stirAngle, stirPts, true);
+      stirRAF2 = requestAnimationFrame(frame);
     }
-    rotateRod();
-    setTimeout(() => { if(stirOn) sp.textContent = '·'; }, 700);
-    setTimeout(() => { if(stirOn) sp.textContent = ''; }, 1400);
+    frame();
   } else {
     btn.textContent = '▶ 開始攪拌'; btn.classList.remove('on');
     cancelAnimationFrame(stirRAF2);
-    document.getElementById('s-lbl').textContent = '靜置中';
-    swirl1.setAttribute('stroke','rgba(79,195,247,0)');
-    swirl2.setAttribute('stroke','rgba(79,195,247,0)');
-    sp.textContent = '⬛';
+    initStirCanvas();
   }
 }
 
-let groundOn = false;
+/* ── Grain size canvas ── */
+let grainOn = false, grainRAF = null;
+
+function initGrainCanvas() {
+  const cv = document.getElementById('cv-grain');
+  if (!cv) return;
+  const ctx = cv.getContext('2d'), W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  _drawGrainScene(ctx, W, H, 22, 0, []);
+}
+
+function _drawGrainScene(ctx, W, H, bigR, smallAlpha, floatPts) {
+  const by=12, bh=72, bw=70;
+  const lbx=12, rbx=W-12-bw;
+  // left beaker (large chunk)
+  ctx.fillStyle='rgba(100,181,246,0.18)'; ctx.fillRect(lbx+2,by+2,bw-4,bh-4);
+  ctx.strokeStyle='#90caf9'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(lbx-5,by); ctx.lineTo(lbx,by); ctx.lineTo(lbx,by+bh); ctx.lineTo(lbx+bw,by+bh); ctx.lineTo(lbx+bw,by); ctx.lineTo(lbx+bw+5,by); ctx.stroke();
+  if(bigR>0){ctx.fillStyle='rgba(212,168,67,0.9)';ctx.strokeStyle='#c49a3c';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(lbx+bw/2,by+bh-bigR-4,bigR,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(255,255,255,0.3)';ctx.beginPath();ctx.arc(lbx+bw/2-5,by+bh-bigR-9,bigR*.3,0,Math.PI*2);ctx.fill();}
+  ctx.fillStyle='#555'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('大顆粒', lbx+bw/2, by+bh+13);
+  ctx.fillStyle='#888'; ctx.font='10px sans-serif';
+  ctx.fillText('🐢 慢', lbx+bw/2, by+bh+26);
+  // right beaker (small particles)
+  ctx.fillStyle='rgba(100,181,246,0.18)'; ctx.fillRect(rbx+2,by+2,bw-4,bh-4);
+  ctx.strokeStyle='#90caf9'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(rbx-5,by); ctx.lineTo(rbx,by); ctx.lineTo(rbx,by+bh); ctx.lineTo(rbx+bw,by+bh); ctx.lineTo(rbx+bw,by); ctx.lineTo(rbx+bw+5,by); ctx.stroke();
+  const sPos=[[-18,8],[-8,16],[4,10],[14,6],[-14,22],[6,24],[-4,30]];
+  sPos.forEach(([ox,oy],i)=>{
+    const r=3.5+i%2; ctx.fillStyle=`rgba(212,168,67,${smallAlpha*(0.7+i%3*.1)})`;
+    ctx.strokeStyle=`rgba(196,154,60,${smallAlpha*.6})`; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(rbx+bw/2+ox,by+bh-oy-4,r,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  });
+  floatPts.forEach(p=>{ctx.fillStyle=`rgba(255,183,77,${p.a})`;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();});
+  ctx.fillStyle='#555'; ctx.font='bold 10px sans-serif';
+  ctx.fillText('細粉末', rbx+bw/2, by+bh+13);
+  ctx.fillStyle = smallAlpha>0 ? '#2e7d32' : '#888';
+  ctx.font='bold 10px sans-serif';
+  ctx.fillText(smallAlpha>0?'🚀 超快！':'🐢 慢', rbx+bw/2, by+bh+26);
+  // arrow between
+  ctx.strokeStyle='#bbb'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(lbx+bw+8,by+bh/2); ctx.lineTo(rbx-8,by+bh/2); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#bbb'; ctx.beginPath();
+  ctx.moveTo(rbx-8,by+bh/2-4); ctx.lineTo(rbx-2,by+bh/2); ctx.lineTo(rbx-8,by+bh/2+4); ctx.fill();
+}
+
 function toggleGrind() {
-  groundOn = !groundOn;
+  grainOn = !grainOn;
   const btn = document.getElementById('grind-btn');
-  const smallG = document.getElementById('gp-small');
-  const bigG = document.getElementById('gp1');
-  const lbl = document.getElementById('grind-lbl');
-  if (groundOn) {
+  if (grainOn) {
     btn.textContent = '↩ 恢復大顆粒'; btn.classList.add('on');
-    bigG.setAttribute('opacity','0');
-    smallG.setAttribute('opacity','1');
-    lbl.textContent = '溶解：🚀 超快！';
-    lbl.setAttribute('fill','#2e7d32');
-    // animate small particles appearing
-    smallG.querySelectorAll('circle').forEach((c,i) => {
-      c.setAttribute('opacity','0');
-      setTimeout(() => { c.setAttribute('opacity','1'); }, i * 80);
-    });
+    const cv = document.getElementById('cv-grain');
+    const ctx = cv.getContext('2d'), W = cv.width, H = cv.height;
+    const rbx=W-12-70, by=12, bh=72;
+    let t=0, bigR=22, alpha=0, floatPts=[];
+    function frame() {
+      if (!grainOn) return;
+      ctx.clearRect(0,0,W,H); t++;
+      bigR = Math.max(bigR-0.04, 18);
+      alpha = Math.min(t/30, 1);
+      if(t%12===0&&floatPts.length<20) floatPts.push({x:rbx+8+Math.random()*54,y:by+bh-8-Math.random()*40,vx:(Math.random()-.5)*1.8,vy:-.6-Math.random()*.9,a:.8,r:2.2});
+      floatPts=floatPts.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.a-=.011;if(p.y<by+2)p.a=0;return p.a>0;});
+      _drawGrainScene(ctx, W, H, bigR, alpha, floatPts);
+      grainRAF = requestAnimationFrame(frame);
+    }
+    frame();
   } else {
     btn.textContent = '▶ 研磨成粉末'; btn.classList.remove('on');
-    bigG.setAttribute('opacity','1');
-    smallG.setAttribute('opacity','0');
-    lbl.textContent = '溶解：🐢';
-    lbl.setAttribute('fill','#888');
+    cancelAnimationFrame(grainRAF);
+    initGrainCanvas();
   }
 }
 
