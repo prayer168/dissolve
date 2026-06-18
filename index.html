@@ -1185,35 +1185,83 @@ function animSalt(key, done) {
   frame();
 }
 
-/* ── 3. 游泳池消毒：disinfectant wave kills bacteria ── */
+/* ── 3. 游泳池消毒：chlorine tablet drops, ripples spread, bacteria die ── */
 function animPool(key, done) {
-  const {ctx,W,H} = gctx(key);
-  const px=8,py=26,pw=204,ph=90;
-  const bact=Array.from({length:22},()=>({x:px+10+Math.random()*(pw-20),y:py+10+Math.random()*(ph-20),r:3+Math.random()*3,color:['#ef5350','#ff7043','#ffa726'][Math.floor(Math.random()*3)],leg:Math.random()*Math.PI*2,alpha:1,dead:false}));
-  let t=0,waveR=0,finished=false;
-  function frame() {
+  const {ctx,W,H}=gctx(key);
+  const px=8,py=28,pw=204,ph=88;
+  const dropX=px+pw-48, hitY=py+8;
+  let tabY=4, tabR=9, tabAlpha=1, tabHit=false, chlorR=0;
+  const bact=Array.from({length:16},()=>({
+    x:px+14+Math.random()*(pw-28), y:py+14+Math.random()*(ph-28),
+    rot:Math.random()*Math.PI*2, drot:(Math.random()-.5)*0.025,
+    sz:4+Math.random()*2, ph2:Math.random()*Math.PI*2, a:1, dead:false
+  }));
+  const rings=[]; let t=0, finished=false;
+  function frame(){
     ctx.clearRect(0,0,W,H); t++;
-    // pool
-    const g=ctx.createLinearGradient(px,py,px,py+ph); g.addColorStop(0,'rgba(79,195,247,0.52)'); g.addColorStop(1,'rgba(25,118,210,0.46)');
-    ctx.fillStyle=g; ctx.strokeStyle='#29b6f6'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(px,py,pw,ph,6); ctx.fill(); ctx.stroke();
-    ctx.setLineDash([8,5]); ctx.strokeStyle='rgba(255,255,255,0.27)'; ctx.lineWidth=1.5;
-    for(let i=1;i<4;i++){ctx.beginPath(); ctx.moveTo(px+4,py+ph/4*i); ctx.lineTo(px+pw-4,py+ph/4*i); ctx.stroke();}
+    // Pool water
+    const wg=ctx.createLinearGradient(px,py,px,py+ph);
+    wg.addColorStop(0,'rgba(41,182,246,0.50)'); wg.addColorStop(1,'rgba(13,71,161,0.54)');
+    ctx.fillStyle=wg; ctx.fillRect(px,py,pw,ph);
+    // Lane dividers
+    ctx.setLineDash([10,8]); ctx.strokeStyle='rgba(255,255,255,0.20)'; ctx.lineWidth=1.5;
+    for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(px,py+ph/4*i);ctx.lineTo(px+pw,py+ph/4*i);ctx.stroke();}
     ctx.setLineDash([]);
-    // wave
-    if(waveR<Math.max(pw,ph)*1.3) waveR+=1.9;
-    const wx=px+pw/2,wy=py+ph/2,wa=Math.max(0,0.6-waveR/260);
-    if(wa>0){ctx.strokeStyle=`rgba(100,240,200,${wa})`; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(wx,wy,waveR,0,Math.PI*2); ctx.stroke(); if(waveR>22){ctx.strokeStyle=`rgba(100,240,200,${wa*.5})`; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(wx,wy,waveR-18,0,Math.PI*2); ctx.stroke();}}
-    // bacteria
+    // Water surface shimmer
+    ctx.strokeStyle='rgba(255,255,255,0.38)'; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    for(let x=px;x<=px+pw;x+=4){const wy=py+Math.sin((x-px)*.07+t*.06)*2; x===px?ctx.moveTo(x,wy):ctx.lineTo(x,wy);}
+    ctx.stroke();
+    // Pool border
+    ctx.strokeStyle='#29b6f6'; ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,py+ph);ctx.lineTo(px+pw,py+ph);ctx.lineTo(px+pw,py);ctx.stroke();
+    // Tablet drop
+    if(!tabHit){
+      tabY=Math.min(tabY+2.4,hitY);
+      if(tabY>=hitY){tabHit=true; rings.push({r:5,a:0.9},{r:2,a:0.7});}
+    } else {
+      tabR=Math.max(0,tabR-0.055); tabAlpha=Math.max(0,tabAlpha-0.005);
+      if(chlorR<Math.hypot(pw,ph)*1.15) chlorR+=1.4;
+    }
+    if(tabR>0.5){
+      ctx.save(); ctx.globalAlpha=tabAlpha;
+      ctx.fillStyle='#e8f5e9'; ctx.strokeStyle='#66bb6a'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.arc(dropX,tabY,tabR,0,Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle='rgba(255,255,255,0.8)'; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.moveTo(dropX-tabR+2,tabY); ctx.lineTo(dropX+tabR-2,tabY); ctx.stroke();
+      ctx.restore();
+    }
+    // Ripple rings (elliptical — water surface perspective)
+    if(tabHit&&t%20===0&&rings.length<12) rings.push({r:4,a:0.78});
+    rings.forEach(r=>{r.r+=2.2; r.a-=0.013;});
+    rings.filter(r=>r.a>0).forEach(r=>{
+      ctx.strokeStyle=`rgba(100,240,190,${r.a})`; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.ellipse(dropX,hitY,r.r,r.r*0.45,0,0,Math.PI*2); ctx.stroke();
+    });
+    // Chlorine cloud
+    if(chlorR>0){
+      const cg=ctx.createRadialGradient(dropX,hitY,0,dropX,hitY,chlorR);
+      cg.addColorStop(0,'rgba(100,240,180,0.10)'); cg.addColorStop(0.65,'rgba(100,240,180,0.04)'); cg.addColorStop(1,'rgba(100,240,180,0)');
+      ctx.fillStyle=cg; ctx.beginPath(); ctx.arc(dropX,hitY,chlorR,0,Math.PI*2); ctx.fill();
+    }
+    // Bacteria (oval body + flagellum)
     bact.forEach(b=>{
-      if(b.dead) return; b.leg+=0.13;
-      if(Math.hypot(b.x-wx,b.y-wy)<waveR){b.alpha-=0.04; if(b.alpha<=0)b.dead=true;}
-      ctx.save(); ctx.globalAlpha=Math.max(0,b.alpha);
-      for(let i=0;i<4;i++){const a=b.leg+i*Math.PI/2; ctx.strokeStyle=b.color; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(b.x+Math.cos(a)*b.r,b.y+Math.sin(a)*b.r); ctx.lineTo(b.x+Math.cos(a)*(b.r+4),b.y+Math.sin(a)*(b.r+4)); ctx.stroke();}
-      ctx.fillStyle=b.color; ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+      if(b.dead) return;
+      b.ph2+=0.09; b.rot+=b.drot;
+      if(tabHit){const d=Math.hypot(b.x-dropX,b.y-hitY); if(d<chlorR){b.a-=0.028; if(b.a<=0){b.dead=true;return;}}}
+      ctx.save(); ctx.globalAlpha=Math.max(0,b.a);
+      ctx.translate(b.x,b.y); ctx.rotate(b.rot);
+      ctx.fillStyle='#ef5350'; ctx.strokeStyle='#b71c1c'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.ellipse(0,0,b.sz*1.9,b.sz,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle='rgba(183,28,28,0.55)'; ctx.beginPath(); ctx.arc(0,0,b.sz*.5,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(239,83,80,0.65)'; ctx.lineWidth=1.2; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(b.sz*1.9,0);
+      ctx.bezierCurveTo(b.sz*2.9,Math.sin(b.ph2)*6,b.sz*3.8,Math.sin(b.ph2+1)*6,b.sz*4.8,0);
+      ctx.stroke();
       ctx.restore();
     });
     if(!finished) appRAFs[key]=requestAnimationFrame(frame);
-    if(bact.every(b=>b.dead)&&!finished){finished=true;setTimeout(done,400);}
+    if(bact.every(b=>b.dead)&&!finished){finished=true;setTimeout(done,500);}
   }
   frame();
 }
@@ -1245,32 +1293,70 @@ function animDye(key, done) {
   frame();
 }
 
-/* ── 5. 泡藥服用：tablet falls, fizzes, dissolves ── */
+/* ── 5. 泡藥服用：round effervescent tablet falls, fizzes with bubble streams ── */
 function animPill(key, done) {
-  const {ctx,W,H} = gctx(key);
-  const gx=66,gy=10,gw=88,gh=122,waterY=gy+28;
-  let pillY=gy-22,pillW=36,pillH=14,pillA=1,falling=true;
-  const parts=[]; let t=0;
-  function frame() {
+  const {ctx,W,H}=gctx(key);
+  const gx=68,gy=10,gw=84,gh=118,waterY=gy+22;
+  const cx=gx+gw/2, restY=gy+gh-22;
+  let pillR=16, pillY=gy-20, fallen=false;
+  const bubbles=[]; let t=0;
+  function frame(){
     ctx.clearRect(0,0,W,H); t++;
-    // water
-    ctx.fillStyle='rgba(79,195,247,0.18)'; ctx.fillRect(gx,waterY,gw,gy+gh-waterY);
-    // wave
-    ctx.strokeStyle='rgba(79,195,247,0.52)'; ctx.lineWidth=1.5; ctx.beginPath();
-    for(let x=gx;x<=gx+gw;x+=3){const wy=waterY+Math.sin((x-gx)*0.18+t*0.14)*2; x===gx?ctx.moveTo(x,wy):ctx.lineTo(x,wy);} ctx.stroke();
-    // glass
-    ctx.strokeStyle='#90caf9'; ctx.lineWidth=2.5; ctx.strokeRect(gx,gy,gw,gh);
-    ctx.strokeStyle='#b0bec5'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(gx-6,gy); ctx.lineTo(gx+gw+6,gy); ctx.stroke();
-    // pill motion
-    if(falling){pillY+=1.5; if(pillY+pillH>=waterY)falling=false;}
-    else{pillW=Math.max(0,pillW-.20); pillH=Math.max(0,pillH-.09); pillA=Math.max(0,pillA-.006); if(t%3===0&&pillA>.05)parts.push({x:gx+gw/2+(Math.random()-.5)*pillW,y:waterY+4+Math.random()*10,vx:(Math.random()-.5)*1.8,vy:-.45-Math.random()*.55,a:.85,r:2+Math.random()*2,col:['#80cbc4','#4db6ac','#80deea'][Math.floor(Math.random()*3)]});}
-    // fizz
-    const live=[];
-    parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.022;p.a-=0.015;if(p.a>0){live.push(p);ctx.save();ctx.globalAlpha=p.a;ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();ctx.restore();}});
-    parts.length=0; parts.push(...live);
-    // draw pill
-    if(pillA>0.01){const px=gx+gw/2-pillW/2,py=pillY,half=Math.max(1,pillH/2); ctx.save(); ctx.globalAlpha=pillA; ctx.fillStyle='#80cbc4'; ctx.strokeStyle='#4db6ac'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.roundRect(px,py,pillW,pillH,half); ctx.fill(); ctx.stroke(); ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(px+pillW/2,py+2); ctx.lineTo(px+pillW/2,py+pillH-2); ctx.stroke(); ctx.restore();}
-    if(pillA>0.01||parts.length) appRAFs[key]=requestAnimationFrame(frame); else setTimeout(done,300);
+    // Water tint (golden as dissolves)
+    const frac=Math.max(0,1-pillR/16);
+    const wr=Math.round(79+140*frac),wg2=Math.round(195+30*frac),wb=Math.round(247-110*frac);
+    ctx.fillStyle=`rgba(${wr},${wg2},${wb},0.22)`;
+    ctx.fillRect(gx+2,waterY,gw-4,gy+gh-waterY-2);
+    // Water surface wave
+    ctx.strokeStyle=`rgba(${wr},${wg2},${wb},0.65)`; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    for(let x=gx+2;x<=gx+gw-2;x+=3){const wy=waterY+Math.sin((x-gx)*.2+t*.1)*1.5; x===gx+2?ctx.moveTo(x,wy):ctx.lineTo(x,wy);}
+    ctx.stroke();
+    // Glass
+    ctx.strokeStyle='#90caf9'; ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(gx-7,gy);ctx.lineTo(gx,gy);ctx.lineTo(gx,gy+gh);ctx.lineTo(gx+gw,gy+gh);ctx.lineTo(gx+gw,gy);ctx.lineTo(gx+gw+7,gy);ctx.stroke();
+    // Glass shine
+    ctx.strokeStyle='rgba(255,255,255,0.42)'; ctx.lineWidth=3; ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(gx+5,gy+12);ctx.lineTo(gx+5,gy+gh*.42);ctx.stroke();
+    // Tablet fall — decelerates in water
+    if(!fallen){
+      pillY+=pillY<waterY?2.0:1.0;
+      if(pillY>=restY){pillY=restY;fallen=true;}
+    } else if(pillR>0){
+      pillR=Math.max(0,pillR-0.055);
+      // bubble streams: 3 fixed points around tablet top
+      if(t%4===0&&pillR>1.5){
+        for(let k=-1;k<=1;k++){
+          bubbles.push({
+            x:cx+k*pillR*.6, y:pillY-pillR*.7,
+            r:0.9+Math.random()*1.8, vy:-0.52-Math.random()*.6, vx:k*.18+(Math.random()-.5)*.2, a:0.78
+          });
+        }
+      }
+    }
+    // Bubbles (rise, slightly grow, pop at surface)
+    for(let i=bubbles.length-1;i>=0;i--){
+      const b=bubbles[i]; b.x+=b.vx; b.y+=b.vy; b.r+=0.013;
+      b.a -= b.y<waterY+5 ? 0.1 : 0.005;
+      if(b.a<=0){bubbles.splice(i,1);continue;}
+      ctx.save(); ctx.globalAlpha=b.a;
+      ctx.strokeStyle='rgba(150,228,252,0.9)'; ctx.lineWidth=1;
+      ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.stroke();
+      ctx.fillStyle='rgba(255,255,255,0.28)';
+      ctx.beginPath();ctx.arc(b.x-b.r*.32,b.y-b.r*.32,b.r*.36,0,Math.PI*2);ctx.fill();
+      ctx.restore();
+    }
+    // Tablet (circle with cross score line + shine)
+    if(pillR>0.5){
+      ctx.fillStyle='rgba(238,246,255,0.93)'; ctx.strokeStyle='#90caf9'; ctx.lineWidth=1.8;
+      ctx.beginPath();ctx.arc(cx,pillY,pillR,0,Math.PI*2);ctx.fill();ctx.stroke();
+      ctx.strokeStyle='rgba(160,210,240,0.85)'; ctx.lineWidth=1.4;
+      ctx.beginPath();ctx.moveTo(cx-pillR+3,pillY);ctx.lineTo(cx+pillR-3,pillY);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx,pillY-pillR+3);ctx.lineTo(cx,pillY+pillR-3);ctx.stroke();
+      ctx.fillStyle='rgba(255,255,255,0.40)';
+      ctx.beginPath();ctx.arc(cx-pillR*.32,pillY-pillR*.36,pillR*.3,0,Math.PI*2);ctx.fill();
+    }
+    if(pillR>0.5||bubbles.length) appRAFs[key]=requestAnimationFrame(frame); else setTimeout(done,300);
   }
   frame();
 }
@@ -1318,12 +1404,12 @@ function initAppCanvases() {
   (()=>{const {ctx}=gctx('drink');const gx=58,gy=16,gw=104,gh=116,waterY=gy+30;ctx.fillStyle='rgba(79,195,247,0.18)';ctx.beginPath();ctx.moveTo(gx,waterY);ctx.lineTo(gx-4,gy+gh);ctx.lineTo(gx+gw+4,gy+gh);ctx.lineTo(gx+gw,waterY);ctx.closePath();ctx.fill();ctx.strokeStyle='#90caf9';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(gx-9,gy);ctx.lineTo(gx,gy);ctx.lineTo(gx-4,gy+gh);ctx.lineTo(gx+gw+4,gy+gh);ctx.lineTo(gx+gw,gy);ctx.lineTo(gx+gw+9,gy);ctx.stroke();for(let i=0;i<5;i++){ctx.fillStyle='#f5e9be';ctx.strokeStyle='rgba(175,150,60,0.5)';ctx.lineWidth=0.8;ctx.fillRect(gx+12+i*16,gy-22,9,9);ctx.strokeRect(gx+12+i*16,gy-22,9,9);}ctx.strokeStyle='#8d6e63';ctx.lineWidth=3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(gx+gw/2,gy+18);ctx.lineTo(gx+gw/2,gy+gh-12);ctx.stroke();})();
   // salt: pan with full water, sun
   (()=>{const {ctx,W}=gctx('salt');ctx.fillStyle='#ffc107';ctx.beginPath();ctx.arc(W/2,26,13,0,Math.PI*2);ctx.fill();for(let i=0;i<8;i++){const a=i*Math.PI/4;ctx.strokeStyle='rgba(255,193,7,0.55)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(W/2+Math.cos(a)*15,26+Math.sin(a)*15);ctx.lineTo(W/2+Math.cos(a)*23,26+Math.sin(a)*23);ctx.stroke();}ctx.fillStyle='#eceff1';ctx.strokeStyle='#90a4ae';ctx.lineWidth=2;ctx.beginPath();ctx.rect(16,74,188,54);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(79,195,247,0.45)';ctx.fillRect(18,76,184,44);})();
-  // pool: pool + scattered bacteria
-  (()=>{const {ctx,W}=gctx('pool');const g=ctx.createLinearGradient(8,26,8,116);g.addColorStop(0,'rgba(79,195,247,0.52)');g.addColorStop(1,'rgba(25,118,210,0.46)');ctx.fillStyle=g;ctx.strokeStyle='#29b6f6';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(8,26,204,90,6);ctx.fill();ctx.stroke();['#ef5350','#ff7043','#ffa726'].forEach((c,ci)=>{for(let i=0;i<5;i++){ctx.fillStyle=c;ctx.beginPath();ctx.arc(18+ci*68+i*12,42+Math.sin(i+ci)*30,3.5+Math.random(),0,Math.PI*2);ctx.fill();}});})();
+  // pool: side-view pool + oval bacteria + chlorine tablet above
+  (()=>{const {ctx}=gctx('pool');const px=8,py=28,pw=204,ph=88;const g=ctx.createLinearGradient(px,py,px,py+ph);g.addColorStop(0,'rgba(79,195,247,0.52)');g.addColorStop(1,'rgba(25,118,210,0.46)');ctx.fillStyle=g;ctx.strokeStyle='#29b6f6';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(px,py,pw,ph,4);ctx.fill();ctx.stroke();ctx.fillStyle='#a5d6a7';ctx.strokeStyle='#66bb6a';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px+pw-44,py-10,8,0,Math.PI*2);ctx.fill();ctx.stroke();const bpos=[[30,55],[55,42],[90,68],[120,48],[150,62],[175,45],[50,80],[130,82]];bpos.forEach(([bx,by])=>{ctx.save();ctx.translate(bx,by);ctx.fillStyle='#ef5350';ctx.beginPath();ctx.ellipse(0,0,9,5,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(183,28,28,0.5)';ctx.lineWidth=1;ctx.stroke();ctx.fillStyle='rgba(183,28,28,0.6)';ctx.beginPath();ctx.arc(0,0,2,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(183,28,28,0.5)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(9,0);ctx.bezierCurveTo(14,-4,16,4,20,0);ctx.stroke();ctx.restore();});})();
   // dye: blank fabric
   (()=>{const {ctx,W,H}=gctx('dye');ctx.fillStyle='#f5f5f5';ctx.fillRect(0,0,W,H);ctx.strokeStyle='rgba(200,200,200,0.28)';ctx.lineWidth=1;for(let x=0;x<W;x+=12){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<H;y+=12){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}ctx.fillStyle='rgba(156,39,176,0.18)';ctx.beginPath();ctx.arc(W/2,H/2,7,0,Math.PI*2);ctx.fill();})();
-  // pill: glass + tablet above
-  (()=>{const {ctx}=gctx('pill');const gx=66,gy=10,gw=88,gh=122,waterY=gy+28;ctx.fillStyle='rgba(79,195,247,0.18)';ctx.fillRect(gx,waterY,gw,gy+gh-waterY);ctx.strokeStyle='#90caf9';ctx.lineWidth=2.5;ctx.strokeRect(gx,gy,gw,gh);ctx.strokeStyle='#b0bec5';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(gx-6,gy);ctx.lineTo(gx+gw+6,gy);ctx.stroke();ctx.fillStyle='#80cbc4';ctx.strokeStyle='#4db6ac';ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(gx+gw/2-18,gy-22,36,14,7);ctx.fill();ctx.stroke();ctx.strokeStyle='rgba(255,255,255,0.5)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(gx+gw/2,gy-20);ctx.lineTo(gx+gw/2,gy-10);ctx.stroke();})();
+  // pill: glass + round tablet above
+  (()=>{const {ctx}=gctx('pill');const gx=68,gy=10,gw=84,gh=118,waterY=gy+22;ctx.fillStyle='rgba(79,195,247,0.18)';ctx.fillRect(gx,waterY,gw,gy+gh-waterY);ctx.strokeStyle='#90caf9';ctx.lineWidth=2.5;ctx.strokeRect(gx,gy,gw,gh);ctx.strokeStyle='#b0bec5';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(gx-6,gy);ctx.lineTo(gx+gw+6,gy);ctx.stroke();const cx=gx+gw/2,cy=gy-20,pr=16;ctx.fillStyle='#80cbc4';ctx.strokeStyle='#4db6ac';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(cx,cy,pr,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.strokeStyle='rgba(255,255,255,0.6)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(cx-pr+4,cy);ctx.lineTo(cx+pr-4,cy);ctx.stroke();ctx.beginPath();ctx.moveTo(cx,cy-pr+4);ctx.lineTo(cx,cy+pr-4);ctx.stroke();ctx.fillStyle='rgba(255,255,255,0.35)';ctx.beginPath();ctx.ellipse(cx-5,cy-6,5,3,-0.5,0,Math.PI*2);ctx.fill();})();
   // filter: funnel with dirt + empty beaker
   (()=>{const {ctx,W,H}=gctx('filter');const fTX=28,fTY=6,fTW=164,fNX=W/2-12,fNY=80,fNW=24,filterY=60;ctx.fillStyle='rgba(161,136,127,0.3)';ctx.beginPath();ctx.moveTo(fTX,fTY);ctx.lineTo(fNX,fNY);ctx.lineTo(fNX+fNW,fNY);ctx.lineTo(fTX+fTW,fTY);ctx.closePath();ctx.fill();ctx.strokeStyle='#90a4ae';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(fTX,fTY);ctx.lineTo(fNX,fNY);ctx.lineTo(fNX+fNW,fNY);ctx.lineTo(fTX+fTW,fTY);ctx.closePath();ctx.stroke();ctx.strokeStyle='#ffe0b2';ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(fTX+6,filterY);ctx.quadraticCurveTo(W/2,filterY+11,fTX+fTW-6,filterY);ctx.stroke();ctx.fillStyle='rgba(79,195,247,0.15)';ctx.strokeStyle='#90a4ae';ctx.lineWidth=2;ctx.beginPath();ctx.rect(fNX,fNY,fNW,44);ctx.fill();ctx.stroke();const bkX=fNX-18,bkY=H-50,bkW=fNW+36,bkH=44;ctx.strokeStyle='#90caf9';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(bkX,bkY);ctx.lineTo(bkX-2,bkY+bkH);ctx.lineTo(bkX+bkW+2,bkY+bkH);ctx.lineTo(bkX+bkW,bkY);ctx.stroke();})();
 }
