@@ -1111,7 +1111,7 @@ function animDrink(key, done) {
   const gx=58,gy=16,gw=104,gh=116,waterY=gy+30;
   const pts = Array.from({length:20}, () => ({
     x:gx+8+Math.random()*(gw-16), y:gy-20-Math.random()*28,
-    vy:0.75+Math.random()*0.55, alpha:1, sinking:false, dead:false
+    vy:0.38+Math.random()*0.28, alpha:1, sinking:false, dead:false
   }));
   let angle=0,t=0;
   function frame() {
@@ -1137,7 +1137,7 @@ function animDrink(key, done) {
     pts.forEach(p=>{
       if(p.dead) return; allDead=false;
       if(!p.sinking){p.y+=p.vy; if(p.y+4>=waterY) p.sinking=true;}
-      else{p.alpha-=0.017; p.x+=(Math.random()-.5)*2.5; p.y+=(Math.random()-.5)*1.2; if(p.alpha<=0)p.dead=true;}
+      else{p.alpha-=0.009; p.x+=(Math.random()-.5)*1.5; p.y+=(Math.random()-.5)*0.7; if(p.alpha<=0)p.dead=true;}
       ctx.save(); ctx.globalAlpha=Math.max(0,p.alpha);
       ctx.fillStyle='#f5e9be'; ctx.strokeStyle='rgba(175,150,60,0.55)'; ctx.lineWidth=0.8;
       ctx.fillRect(p.x-4,p.y-4,8,8); ctx.strokeRect(p.x-4,p.y-4,8,8);
@@ -1167,7 +1167,7 @@ function animSalt(key, done) {
     // pan
     ctx.fillStyle='#eceff1'; ctx.strokeStyle='#90a4ae'; ctx.lineWidth=2; ctx.beginPath(); ctx.rect(panX,panY,panW,panH); ctx.fill(); ctx.stroke();
     // water
-    if(waterTop<waterTarget) waterTop+=0.3;
+    if(waterTop<waterTarget) waterTop+=0.15;
     const wH=panY+panH-waterTop-8;
     if(wH>0){ctx.fillStyle='rgba(79,195,247,0.45)'; ctx.fillRect(panX+2,waterTop,panW-4,wH); ctx.strokeStyle='rgba(255,255,255,0.28)'; ctx.lineWidth=1; for(let i=0;i<3;i++){const wx=panX+22+i*58+Math.sin(t*0.09+i)*5; ctx.beginPath(); ctx.moveTo(wx,waterTop+7); ctx.lineTo(wx+22,waterTop+7); ctx.stroke();}}
     // crystals
@@ -1195,7 +1195,7 @@ function animPool(key, done) {
     for(let i=1;i<4;i++){ctx.beginPath(); ctx.moveTo(px+4,py+ph/4*i); ctx.lineTo(px+pw-4,py+ph/4*i); ctx.stroke();}
     ctx.setLineDash([]);
     // wave
-    if(waveR<Math.max(pw,ph)*1.3) waveR+=3.8;
+    if(waveR<Math.max(pw,ph)*1.3) waveR+=1.9;
     const wx=px+pw/2,wy=py+ph/2,wa=Math.max(0,0.6-waveR/260);
     if(wa>0){ctx.strokeStyle=`rgba(100,240,200,${wa})`; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(wx,wy,waveR,0,Math.PI*2); ctx.stroke(); if(waveR>22){ctx.strokeStyle=`rgba(100,240,200,${wa*.5})`; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(wx,wy,waveR-18,0,Math.PI*2); ctx.stroke();}}
     // bacteria
@@ -1228,7 +1228,7 @@ function animDye(key, done) {
     // dye blobs
     drops.forEach(d=>{
       if(t<d.d) return;
-      if(d.r<d.maxR) d.r+=1.6;
+      if(d.r<d.maxR) d.r+=0.8;
       const al=Math.max(0.06,0.55-(d.r/d.maxR)*0.48);
       const gr=ctx.createRadialGradient(d.x,d.y,0,d.x,d.y,d.r);
       gr.addColorStop(0,`rgba(${d.c},${al+0.15})`); gr.addColorStop(0.6,`rgba(${d.c},${al})`); gr.addColorStop(1,`rgba(${d.c},0)`);
@@ -1257,8 +1257,8 @@ function animPill(key, done) {
     ctx.strokeStyle='#90caf9'; ctx.lineWidth=2.5; ctx.strokeRect(gx,gy,gw,gh);
     ctx.strokeStyle='#b0bec5'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(gx-6,gy); ctx.lineTo(gx+gw+6,gy); ctx.stroke();
     // pill motion
-    if(falling){pillY+=3; if(pillY+pillH>=waterY)falling=false;}
-    else{pillW=Math.max(0,pillW-.42); pillH=Math.max(0,pillH-.19); pillA=Math.max(0,pillA-.013); if(t%3===0&&pillA>.05)parts.push({x:gx+gw/2+(Math.random()-.5)*pillW,y:waterY+4+Math.random()*10,vx:(Math.random()-.5)*1.8,vy:-.45-Math.random()*.55,a:.85,r:2+Math.random()*2,col:['#80cbc4','#4db6ac','#80deea'][Math.floor(Math.random()*3)]});}
+    if(falling){pillY+=1.5; if(pillY+pillH>=waterY)falling=false;}
+    else{pillW=Math.max(0,pillW-.20); pillH=Math.max(0,pillH-.09); pillA=Math.max(0,pillA-.006); if(t%3===0&&pillA>.05)parts.push({x:gx+gw/2+(Math.random()-.5)*pillW,y:waterY+4+Math.random()*10,vx:(Math.random()-.5)*1.8,vy:-.45-Math.random()*.55,a:.85,r:2+Math.random()*2,col:['#80cbc4','#4db6ac','#80deea'][Math.floor(Math.random()*3)]});}
     // fizz
     const live=[];
     parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.022;p.a-=0.015;if(p.a>0){live.push(p);ctx.save();ctx.globalAlpha=p.a;ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();ctx.restore();}});
@@ -1298,7 +1298,7 @@ function animFilter(key, done) {
       ctx.fillStyle=p.col; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
     });
     // drips
-    if((allS||t>95)&&!finished){flowing=true;if(t%22===0)drops.push({x:fNX+fNW/2,y:fNY+44,vy:1.3,r:4});if(collected<bkH-6)collected+=0.24;}
+    if((allS||t>95)&&!finished){flowing=true;if(t%40===0)drops.push({x:fNX+fNW/2,y:fNY+44,vy:1.0,r:4});if(collected<bkH-6)collected+=0.12;}
     const liveDr=[]; drops.forEach(d=>{d.y+=d.vy;d.vy+=0.1;if(d.y<bkY+bkH+12){liveDr.push(d);ctx.fillStyle='rgba(79,195,247,0.78)';ctx.beginPath();ctx.ellipse(d.x,d.y,d.r*.7,d.r,0,0,Math.PI*2);ctx.fill();}});
     drops.length=0;drops.push(...liveDr);
     if(!finished) appRAFs[key]=requestAnimationFrame(frame);
