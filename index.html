@@ -135,28 +135,20 @@ body{font-family:'Microsoft JhengHei','微軟正黑體',Arial,sans-serif;backgro
 @keyframes riseUp{0%{bottom:0;opacity:.9}100%{bottom:90%;opacity:0}}
 
 /* ══════ SECTION 4 — APPLY ══════ */
-.app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:16px}
-.app-card{height:175px;perspective:700px;cursor:pointer}
-.app-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}
-.app-card.flipped .app-inner{transform:rotateY(180deg)}
-.app-front,.app-back{position:absolute;width:100%;height:100%;border-radius:15px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;text-align:center}
-.app-front{background:#fff;box-shadow:0 4px 13px rgba(0,0,0,.08);border:2px solid #e3f2fd}
-.app-back{background:linear-gradient(135deg,#1a8fe3,#2ed8a0);color:#fff;transform:rotateY(180deg);box-shadow:0 4px 13px rgba(26,143,227,.3)}
-.app-front .ai{font-size:2.4em;margin-bottom:8px;display:block}
-.app-card:not(.flipped) .app-front .ai{animation:iconPulse 2.5s ease-in-out infinite}
-@keyframes iconPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
-.app-card:nth-child(2) .ai{animation-delay:.4s}
-.app-card:nth-child(3) .ai{animation-delay:.8s}
-.app-card:nth-child(4) .ai{animation-delay:.3s}
-.app-card:nth-child(5) .ai{animation-delay:.7s}
-.app-card:nth-child(6) .ai{animation-delay:.5s}
-.app-front .an{font-weight:bold;font-size:.93em}
-.app-front .ah{font-size:.72em;color:#bbb;margin-top:5px;animation:blink 1.5s ease infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
-.app-back .ae{font-size:.84em;line-height:1.65}
-/* particle burst on flip */
-.burst-particle{position:fixed;border-radius:50%;pointer-events:none;z-index:999;animation:burstAnim .7s ease-out both}
-@keyframes burstAnim{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+.app-i-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.app-i-card{background:#fff;border-radius:16px;padding:16px 16px 14px;box-shadow:0 4px 14px rgba(0,0,0,.07);display:flex;flex-direction:column;align-items:center;animation:slideIn .4s ease both}
+.app-i-card:nth-child(2){animation-delay:.07s}
+.app-i-card:nth-child(3){animation-delay:.14s}
+.app-i-card:nth-child(4){animation-delay:.21s}
+.app-i-card:nth-child(5){animation-delay:.28s}
+.app-i-card:nth-child(6){animation-delay:.35s}
+.app-i-head{font-size:1em;font-weight:bold;margin-bottom:9px;align-self:flex-start;display:flex;align-items:center;gap:6px}
+.app-i-cv{border-radius:10px;background:#f0f9ff;border:1.5px solid #e3f2fd;margin-bottom:10px;display:block;max-width:100%}
+.app-i-btn{padding:7px 20px;border-radius:18px;border:2px solid #1a8fe3;background:#fff;color:#1a8fe3;cursor:pointer;font-size:.88em;font-family:inherit;transition:all .2s;position:relative;overflow:hidden}
+.app-i-btn:hover{background:#e3f2fd}
+.app-i-btn.on{background:#1a8fe3;color:#fff;cursor:default}
+.app-i-info{font-size:.82em;color:#555;margin-top:9px;line-height:1.55;text-align:center;min-height:34px;opacity:0;transition:opacity .5s;padding:0 4px}
+.app-i-info.show{opacity:1}
 
 /* ══════ SECTION 5 — QUIZ ══════ */
 #confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:500;display:none}
@@ -596,33 +588,45 @@ body{font-family:'Microsoft JhengHei','微軟正黑體',Arial,sans-serif;backgro
 <!-- ══ 4 APPLY ══ -->
 <section id="s4" class="section">
   <div class="sec-title" style="color:#16a085">🧪 溶解的應用</div>
-  <div class="sec-sub">溶解的原理在生活中無處不在！點選卡片翻開答案。</div>
+  <div class="sec-sub">溶解的原理在生活中無處不在！點選按鈕，觀察互動動畫！</div>
 
-  <div class="app-grid">
-    <div class="app-card" onclick="flipCard(this,event)"><div class="app-inner">
-      <div class="app-front"><span class="ai">🍹</span><div class="an">泡製飲料</div><div class="ah">點我看原理 →</div></div>
-      <div class="app-back"><div class="ae">把糖、果汁粉或咖啡溶入水中攪拌，就成了各種飲料。溶解讓味道均勻分散在每一口水中！</div></div>
-    </div></div>
-    <div class="app-card" onclick="flipCard(this,event)"><div class="app-inner">
-      <div class="app-front"><span class="ai">🌊</span><div class="an">海水曬鹽</div><div class="ah">點我看原理 →</div></div>
-      <div class="app-back"><div class="ae">食鹽溶解在海水中。把海水引入鹽田，讓太陽蒸發水分，鹽就留下來了——這叫「蒸發結晶」！</div></div>
-    </div></div>
-    <div class="app-card" onclick="flipCard(this,event)"><div class="app-inner">
-      <div class="app-front"><span class="ai">🏊</span><div class="an">游泳池消毒</div><div class="ah">點我看原理 →</div></div>
-      <div class="app-back"><div class="ae">消毒劑溶於水後，藥效均勻分散在整個泳池，殺死細菌和病毒，讓游泳更安全！</div></div>
-    </div></div>
-    <div class="app-card" onclick="flipCard(this,event)"><div class="app-inner">
-      <div class="app-front"><span class="ai">🎨</span><div class="an">染料染色</div><div class="ah">點我看原理 →</div></div>
-      <div class="app-back"><div class="ae">染料溶解在水中，顏色均勻分布，可以用來染衣服或製作各種色彩的手工藝品！</div></div>
-    </div></div>
-    <div class="app-card" onclick="flipCard(this,event)"><div class="app-inner">
-      <div class="app-front"><span class="ai">💊</span><div class="an">泡藥服用</div><div class="ah">點我看原理 →</div></div>
-      <div class="app-back"><div class="ae">藥粉溶於水後，藥效更容易被身體吸收，比直接吞藥片更快發揮效果！</div></div>
-    </div></div>
-    <div class="app-card" onclick="flipCard(this,event)"><div class="app-inner">
-      <div class="app-front"><span class="ai">🚰</span><div class="an">過濾與淨水</div><div class="ah">點我看原理 →</div></div>
-      <div class="app-back"><div class="ae">不溶於水的雜質（如沙子）可用「過濾」去除；但已溶解的物質（如鹽）需用「蒸發」取回。</div></div>
-    </div></div>
+  <div class="app-i-grid">
+    <div class="app-i-card">
+      <div class="app-i-head">🍹 泡製飲料</div>
+      <canvas class="app-i-cv" id="cv-drink" width="220" height="140"></canvas>
+      <button class="app-i-btn ripple-host" id="btn-drink" onclick="appAnim('drink')">▶ 加糖攪拌</button>
+      <div class="app-i-info" id="info-drink">糖均勻溶解在水中，讓每一口都有甜味——這就是溶解在飲品製作中的應用！</div>
+    </div>
+    <div class="app-i-card">
+      <div class="app-i-head">🌊 海水曬鹽</div>
+      <canvas class="app-i-cv" id="cv-salt" width="220" height="140"></canvas>
+      <button class="app-i-btn ripple-host" id="btn-salt" onclick="appAnim('salt')">▶ 讓陽光蒸發</button>
+      <div class="app-i-info" id="info-salt">水分蒸發後，溶解在海水中的鹽留下來了——這叫「蒸發結晶」，是海水曬鹽的原理！</div>
+    </div>
+    <div class="app-i-card">
+      <div class="app-i-head">🏊 游泳池消毒</div>
+      <canvas class="app-i-cv" id="cv-pool" width="220" height="140"></canvas>
+      <button class="app-i-btn ripple-host" id="btn-pool" onclick="appAnim('pool')">▶ 加入消毒劑</button>
+      <div class="app-i-info" id="info-pool">消毒劑溶於水後均勻擴散，殺死細菌和病毒，讓游泳更安全！</div>
+    </div>
+    <div class="app-i-card">
+      <div class="app-i-head">🎨 染料染色</div>
+      <canvas class="app-i-cv" id="cv-dye" width="220" height="140"></canvas>
+      <button class="app-i-btn ripple-host" id="btn-dye" onclick="appAnim('dye')">▶ 滴入染料</button>
+      <div class="app-i-info" id="info-dye">染料溶解在水中後均勻擴散，讓布料每個角落都染上相同的顏色！</div>
+    </div>
+    <div class="app-i-card">
+      <div class="app-i-head">💊 泡藥服用</div>
+      <canvas class="app-i-cv" id="cv-pill" width="220" height="140"></canvas>
+      <button class="app-i-btn ripple-host" id="btn-pill" onclick="appAnim('pill')">▶ 投入水中</button>
+      <div class="app-i-info" id="info-pill">藥溶於水後，藥效更容易被身體吸收，比直接吞藥片更快發揮效果！</div>
+    </div>
+    <div class="app-i-card">
+      <div class="app-i-head">🚰 過濾淨水</div>
+      <canvas class="app-i-cv" id="cv-filter" width="220" height="140"></canvas>
+      <button class="app-i-btn ripple-host" id="btn-filter" onclick="appAnim('filter')">▶ 開始過濾</button>
+      <div class="app-i-info" id="info-filter">不溶的雜質被濾紙擋住，清澈的水通過——「過濾」去雜質，「蒸發」才能回收溶質！</div>
+    </div>
   </div>
 
   <div class="tip" style="margin-top:22px"><span>💡</span><span><strong>過濾</strong>去除不溶於水的雜質；<strong>蒸發</strong>從溶液中取回溶質——兩者是不同的分離方法！</span></div>
@@ -691,7 +695,9 @@ function go(idx) {
   document.getElementById('nb'+cur).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   if (idx === 0) initBubbles();
+  if (idx === 4 && !appCanvasesInited) { appCanvasesInited = true; initAppCanvases(); }
 }
+let appCanvasesInited = false;
 
 /* ══════════════════════════════════════
    SECTION 0: BUBBLE CANVAS
@@ -967,32 +973,244 @@ function toggleGrind() {
 }
 
 /* ══════════════════════════════════════
-   SECTION 4: FLIP CARD + BURST
+   SECTION 4: INTERACTIVE APP ANIMATIONS
 ══════════════════════════════════════ */
-function flipCard(card, e) {
-  const wasFlipped = card.classList.contains('flipped');
-  card.classList.toggle('flipped');
-  if (!wasFlipped) burstParticles(e.clientX, e.clientY);
+const appRAFs = {};
+const appInitLabels = {drink:'▶ 加糖攪拌',salt:'▶ 讓陽光蒸發',pool:'▶ 加入消毒劑',dye:'▶ 滴入染料',pill:'▶ 投入水中',filter:'▶ 開始過濾'};
+
+function appAnim(key) {
+  cancelAnimationFrame(appRAFs[key]);
+  const btn = document.getElementById('btn-'+key);
+  const info = document.getElementById('info-'+key);
+  btn.classList.add('on'); btn.textContent = '⏳ 觀察中…';
+  info.classList.remove('show');
+  ({drink:animDrink,salt:animSalt,pool:animPool,dye:animDye,pill:animPill,filter:animFilter})[key](key, () => {
+    btn.classList.remove('on'); btn.textContent = '🔄 再看一次';
+    info.classList.add('show');
+  });
 }
 
-function burstParticles(cx, cy) {
-  const colors = ['#1a8fe3','#2ed8a0','#f5a623','#e74c3c','#9b59b6','#3498db'];
-  for (let i = 0; i < 12; i++) {
-    const p = document.createElement('div');
-    p.className = 'burst-particle';
-    const angle = (i / 12) * Math.PI * 2;
-    const dist = 50 + Math.random() * 50;
-    p.style.cssText = `
-      position:fixed;left:${cx-5}px;top:${cy-5}px;
-      width:10px;height:10px;
-      background:${colors[i%colors.length]};
-      --dx:${Math.cos(angle)*dist}px;--dy:${Math.sin(angle)*dist}px;
-      border-radius:50%;pointer-events:none;z-index:999;
-      animation:burstAnim .65s ease-out both;
-      animation-delay:${i*20}ms`;
-    document.body.appendChild(p);
-    setTimeout(() => p.remove(), 800);
+function gctx(key) {
+  const cv = document.getElementById('cv-'+key);
+  return {cv, ctx:cv.getContext('2d'), W:cv.width, H:cv.height};
+}
+
+/* ── 1. 泡製飲料：sugar cubes fall & dissolve with stirring ── */
+function animDrink(key, done) {
+  const {ctx,W,H} = gctx(key);
+  const gx=58,gy=16,gw=104,gh=116,waterY=gy+30;
+  const pts = Array.from({length:20}, () => ({
+    x:gx+8+Math.random()*(gw-16), y:gy-20-Math.random()*28,
+    vy:0.75+Math.random()*0.55, alpha:1, sinking:false, dead:false
+  }));
+  let angle=0,t=0;
+  function frame() {
+    ctx.clearRect(0,0,W,H); t++;
+    // water body
+    ctx.fillStyle='rgba(79,195,247,0.2)';
+    ctx.beginPath(); ctx.moveTo(gx,waterY); ctx.lineTo(gx-4,gy+gh); ctx.lineTo(gx+gw+4,gy+gh); ctx.lineTo(gx+gw,waterY); ctx.closePath(); ctx.fill();
+    // dissolved tint
+    const nd=pts.filter(p=>p.dead).length;
+    if(nd){ctx.fillStyle=`rgba(245,233,160,${nd/pts.length*0.14})`;ctx.beginPath();ctx.moveTo(gx,waterY);ctx.lineTo(gx-4,gy+gh);ctx.lineTo(gx+gw+4,gy+gh);ctx.lineTo(gx+gw,waterY);ctx.closePath();ctx.fill();}
+    // glass
+    ctx.strokeStyle='#90caf9'; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(gx-9,gy); ctx.lineTo(gx,gy); ctx.lineTo(gx-4,gy+gh); ctx.lineTo(gx+gw+4,gy+gh); ctx.lineTo(gx+gw,gy); ctx.lineTo(gx+gw+9,gy); ctx.stroke();
+    // stir rod
+    ctx.save(); ctx.translate(gx+gw/2,gy+gh*0.63); ctx.rotate(angle*Math.PI/180);
+    ctx.strokeStyle='#8d6e63'; ctx.lineWidth=3; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(0,-gh*0.56); ctx.lineTo(0,gh*0.1); ctx.stroke();
+    ctx.strokeStyle='rgba(79,195,247,0.45)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.ellipse(0,gh*0.06,13,4,0,0,Math.PI*2); ctx.stroke();
+    ctx.restore(); angle+=8;
+    // sugar particles
+    let allDead=true;
+    pts.forEach(p=>{
+      if(p.dead) return; allDead=false;
+      if(!p.sinking){p.y+=p.vy; if(p.y+4>=waterY) p.sinking=true;}
+      else{p.alpha-=0.017; p.x+=(Math.random()-.5)*2.5; p.y+=(Math.random()-.5)*1.2; if(p.alpha<=0)p.dead=true;}
+      ctx.save(); ctx.globalAlpha=Math.max(0,p.alpha);
+      ctx.fillStyle='#f5e9be'; ctx.strokeStyle='rgba(175,150,60,0.55)'; ctx.lineWidth=0.8;
+      ctx.fillRect(p.x-4,p.y-4,8,8); ctx.strokeRect(p.x-4,p.y-4,8,8);
+      ctx.restore();
+    });
+    if(!allDead) appRAFs[key]=requestAnimationFrame(frame); else setTimeout(done,400);
   }
+  frame();
+}
+
+/* ── 2. 海水曬鹽：sun evaporates water, crystals form ── */
+function animSalt(key, done) {
+  const {ctx,W,H} = gctx(key);
+  const panX=16,panY=74,panW=188,panH=54;
+  let waterTop=panY+3, waterTarget=panY+panH-10;
+  const crystals=[]; let sunA=0,t=0,finished=false;
+  function frame() {
+    ctx.clearRect(0,0,W,H); t++;
+    // sun
+    ctx.save(); ctx.translate(W/2,26);
+    for(let i=0;i<8;i++){const a=i*Math.PI/4+sunA; ctx.strokeStyle=`rgba(255,193,7,${0.5+Math.sin(t*0.05)*0.18})`; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(Math.cos(a)*15,Math.sin(a)*15); ctx.lineTo(Math.cos(a)*24,Math.sin(a)*24); ctx.stroke();}
+    const sr=13+Math.sin(t*0.07)*1.5; ctx.fillStyle='#ffc107'; ctx.beginPath(); ctx.arc(0,0,sr,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,253,210,0.65)'; ctx.beginPath(); ctx.arc(-4,-4,5,0,Math.PI*2); ctx.fill();
+    ctx.restore(); sunA+=0.02;
+    // steam wisps
+    for(let i=0;i<4;i++){const sx=panX+22+i*46,prog=((t*0.014)+i*0.27)%1,sa=Math.sin(prog*Math.PI)*0.32;const sy=waterTop-prog*52; ctx.strokeStyle=`rgba(180,220,255,${sa})`; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(sx,waterTop); ctx.quadraticCurveTo(sx+(i%2?7:-7),waterTop-26,sx,sy); ctx.stroke();}
+    // pan
+    ctx.fillStyle='#eceff1'; ctx.strokeStyle='#90a4ae'; ctx.lineWidth=2; ctx.beginPath(); ctx.rect(panX,panY,panW,panH); ctx.fill(); ctx.stroke();
+    // water
+    if(waterTop<waterTarget) waterTop+=0.3;
+    const wH=panY+panH-waterTop-8;
+    if(wH>0){ctx.fillStyle='rgba(79,195,247,0.45)'; ctx.fillRect(panX+2,waterTop,panW-4,wH); ctx.strokeStyle='rgba(255,255,255,0.28)'; ctx.lineWidth=1; for(let i=0;i<3;i++){const wx=panX+22+i*58+Math.sin(t*0.09+i)*5; ctx.beginPath(); ctx.moveTo(wx,waterTop+7); ctx.lineTo(wx+22,waterTop+7); ctx.stroke();}}
+    // crystals
+    const prog2=Math.max(0,(waterTop-panY-3)/(waterTarget-panY-3));
+    while(crystals.length<Math.floor(prog2*30)) crystals.push({x:panX+6+Math.random()*(panW-12),y:panY+panH-4-Math.random()*8,w:4+Math.random()*7,h:3+Math.random()*5});
+    crystals.forEach(c=>{ctx.fillStyle='rgba(255,255,255,0.94)'; ctx.strokeStyle='rgba(176,190,197,0.75)'; ctx.lineWidth=0.7; ctx.fillRect(c.x-c.w/2,c.y-c.h/2,c.w,c.h); ctx.strokeRect(c.x-c.w/2,c.y-c.h/2,c.w,c.h);});
+    if(!finished) appRAFs[key]=requestAnimationFrame(frame);
+    if(waterTop>=waterTarget-0.5&&!finished){finished=true;setTimeout(done,600);}
+  }
+  frame();
+}
+
+/* ── 3. 游泳池消毒：disinfectant wave kills bacteria ── */
+function animPool(key, done) {
+  const {ctx,W,H} = gctx(key);
+  const px=8,py=26,pw=204,ph=90;
+  const bact=Array.from({length:22},()=>({x:px+10+Math.random()*(pw-20),y:py+10+Math.random()*(ph-20),r:3+Math.random()*3,color:['#ef5350','#ff7043','#ffa726'][Math.floor(Math.random()*3)],leg:Math.random()*Math.PI*2,alpha:1,dead:false}));
+  let t=0,waveR=0,finished=false;
+  function frame() {
+    ctx.clearRect(0,0,W,H); t++;
+    // pool
+    const g=ctx.createLinearGradient(px,py,px,py+ph); g.addColorStop(0,'rgba(79,195,247,0.52)'); g.addColorStop(1,'rgba(25,118,210,0.46)');
+    ctx.fillStyle=g; ctx.strokeStyle='#29b6f6'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(px,py,pw,ph,6); ctx.fill(); ctx.stroke();
+    ctx.setLineDash([8,5]); ctx.strokeStyle='rgba(255,255,255,0.27)'; ctx.lineWidth=1.5;
+    for(let i=1;i<4;i++){ctx.beginPath(); ctx.moveTo(px+4,py+ph/4*i); ctx.lineTo(px+pw-4,py+ph/4*i); ctx.stroke();}
+    ctx.setLineDash([]);
+    // wave
+    if(waveR<Math.max(pw,ph)*1.3) waveR+=3.8;
+    const wx=px+pw/2,wy=py+ph/2,wa=Math.max(0,0.6-waveR/260);
+    if(wa>0){ctx.strokeStyle=`rgba(100,240,200,${wa})`; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(wx,wy,waveR,0,Math.PI*2); ctx.stroke(); if(waveR>22){ctx.strokeStyle=`rgba(100,240,200,${wa*.5})`; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(wx,wy,waveR-18,0,Math.PI*2); ctx.stroke();}}
+    // bacteria
+    bact.forEach(b=>{
+      if(b.dead) return; b.leg+=0.13;
+      if(Math.hypot(b.x-wx,b.y-wy)<waveR){b.alpha-=0.04; if(b.alpha<=0)b.dead=true;}
+      ctx.save(); ctx.globalAlpha=Math.max(0,b.alpha);
+      for(let i=0;i<4;i++){const a=b.leg+i*Math.PI/2; ctx.strokeStyle=b.color; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(b.x+Math.cos(a)*b.r,b.y+Math.sin(a)*b.r); ctx.lineTo(b.x+Math.cos(a)*(b.r+4),b.y+Math.sin(a)*(b.r+4)); ctx.stroke();}
+      ctx.fillStyle=b.color; ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+    if(!finished) appRAFs[key]=requestAnimationFrame(frame);
+    if(bact.every(b=>b.dead)&&!finished){finished=true;setTimeout(done,400);}
+  }
+  frame();
+}
+
+/* ── 4. 染料染色：dye drops diffuse through fabric ── */
+function animDye(key, done) {
+  const {ctx,W,H} = gctx(key);
+  const drops=[{x:W/2,y:H/2,maxR:92,r:0,c:[156,39,176],d:0},{x:W/2-34,y:H/2+16,maxR:72,r:0,c:[33,150,243],d:18},{x:W/2+30,y:H/2-12,maxR:66,r:0,c:[244,67,54],d:34}];
+  let t=0;
+  function frame() {
+    ctx.clearRect(0,0,W,H); t++;
+    // fabric bg
+    ctx.fillStyle='#f5f5f5'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(200,200,200,0.28)'; ctx.lineWidth=1;
+    for(let x=0;x<W;x+=12){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=12){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    // dye blobs
+    drops.forEach(d=>{
+      if(t<d.d) return;
+      if(d.r<d.maxR) d.r+=1.6;
+      const al=Math.max(0.06,0.55-(d.r/d.maxR)*0.48);
+      const gr=ctx.createRadialGradient(d.x,d.y,0,d.x,d.y,d.r);
+      gr.addColorStop(0,`rgba(${d.c},${al+0.15})`); gr.addColorStop(0.6,`rgba(${d.c},${al})`); gr.addColorStop(1,`rgba(${d.c},0)`);
+      ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2); ctx.fill();
+      if(d.r<14){ctx.fillStyle=`rgba(${d.c},0.9)`;ctx.beginPath();ctx.arc(d.x,d.y,5,0,Math.PI*2);ctx.fill();}
+    });
+    if(drops.some(d=>d.r<d.maxR)) appRAFs[key]=requestAnimationFrame(frame); else setTimeout(done,500);
+  }
+  frame();
+}
+
+/* ── 5. 泡藥服用：tablet falls, fizzes, dissolves ── */
+function animPill(key, done) {
+  const {ctx,W,H} = gctx(key);
+  const gx=66,gy=10,gw=88,gh=122,waterY=gy+28;
+  let pillY=gy-22,pillW=36,pillH=14,pillA=1,falling=true;
+  const parts=[]; let t=0;
+  function frame() {
+    ctx.clearRect(0,0,W,H); t++;
+    // water
+    ctx.fillStyle='rgba(79,195,247,0.18)'; ctx.fillRect(gx,waterY,gw,gy+gh-waterY);
+    // wave
+    ctx.strokeStyle='rgba(79,195,247,0.52)'; ctx.lineWidth=1.5; ctx.beginPath();
+    for(let x=gx;x<=gx+gw;x+=3){const wy=waterY+Math.sin((x-gx)*0.18+t*0.14)*2; x===gx?ctx.moveTo(x,wy):ctx.lineTo(x,wy);} ctx.stroke();
+    // glass
+    ctx.strokeStyle='#90caf9'; ctx.lineWidth=2.5; ctx.strokeRect(gx,gy,gw,gh);
+    ctx.strokeStyle='#b0bec5'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(gx-6,gy); ctx.lineTo(gx+gw+6,gy); ctx.stroke();
+    // pill motion
+    if(falling){pillY+=3; if(pillY+pillH>=waterY)falling=false;}
+    else{pillW=Math.max(0,pillW-.42); pillH=Math.max(0,pillH-.19); pillA=Math.max(0,pillA-.013); if(t%3===0&&pillA>.05)parts.push({x:gx+gw/2+(Math.random()-.5)*pillW,y:waterY+4+Math.random()*10,vx:(Math.random()-.5)*1.8,vy:-.45-Math.random()*.55,a:.85,r:2+Math.random()*2,col:['#80cbc4','#4db6ac','#80deea'][Math.floor(Math.random()*3)]});}
+    // fizz
+    const live=[];
+    parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.022;p.a-=0.015;if(p.a>0){live.push(p);ctx.save();ctx.globalAlpha=p.a;ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();ctx.restore();}});
+    parts.length=0; parts.push(...live);
+    // draw pill
+    if(pillA>0.01){const px=gx+gw/2-pillW/2,py=pillY,half=Math.max(1,pillH/2); ctx.save(); ctx.globalAlpha=pillA; ctx.fillStyle='#80cbc4'; ctx.strokeStyle='#4db6ac'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.roundRect(px,py,pillW,pillH,half); ctx.fill(); ctx.stroke(); ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(px+pillW/2,py+2); ctx.lineTo(px+pillW/2,py+pillH-2); ctx.stroke(); ctx.restore();}
+    if(pillA>0.01||parts.length) appRAFs[key]=requestAnimationFrame(frame); else setTimeout(done,300);
+  }
+  frame();
+}
+
+/* ── 6. 過濾淨水：dirt settles on filter, clear water drips ── */
+function animFilter(key, done) {
+  const {ctx,W,H} = gctx(key);
+  const fTX=28,fTY=6,fTW=164,fNX=W/2-12,fNY=80,fNW=24,filterY=60;
+  const dirt=Array.from({length:26},()=>({x:fTX+8+Math.random()*(fTW-16),y:fTY+4+Math.random()*44,r:2.5+Math.random()*3,col:['#795548','#8d6e63','#a1887f','#6d4c41'][Math.floor(Math.random()*4)],vy:0,settled:false}));
+  const drops=[]; let t=0,collected=0,flowing=false,finished=false;
+  function frame() {
+    ctx.clearRect(0,0,W,H); t++;
+    // muddy water in funnel
+    ctx.fillStyle='rgba(161,136,127,0.32)'; ctx.beginPath(); ctx.moveTo(fTX,fTY); ctx.lineTo(fNX,fNY); ctx.lineTo(fNX+fNW,fNY); ctx.lineTo(fTX+fTW,fTY); ctx.closePath(); ctx.fill();
+    // funnel outline
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(fTX,fTY); ctx.lineTo(fNX,fNY); ctx.lineTo(fNX+fNW,fNY); ctx.lineTo(fTX+fTW,fTY); ctx.closePath(); ctx.stroke();
+    // filter paper
+    ctx.strokeStyle='#ffe0b2'; ctx.lineWidth=3.5; ctx.beginPath(); ctx.moveTo(fTX+6,filterY); ctx.quadraticCurveTo(W/2,filterY+11,fTX+fTW-6,filterY); ctx.stroke();
+    ctx.fillStyle='rgba(255,224,178,0.45)'; for(let i=0;i<5;i++){ctx.beginPath();ctx.arc(W/2-40+i*20,filterY+4,2,0,Math.PI*2);ctx.fill();}
+    // neck tube
+    ctx.fillStyle='rgba(79,195,247,0.15)'; ctx.strokeStyle='#90a4ae'; ctx.lineWidth=2; ctx.beginPath(); ctx.rect(fNX,fNY,fNW,44); ctx.fill(); ctx.stroke();
+    // beaker
+    const bkX=fNX-18,bkY=H-50,bkW=fNW+36,bkH=44;
+    ctx.strokeStyle='#90caf9'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(bkX,bkY); ctx.lineTo(bkX-2,bkY+bkH); ctx.lineTo(bkX+bkW+2,bkY+bkH); ctx.lineTo(bkX+bkW,bkY); ctx.stroke();
+    if(collected>0){ctx.fillStyle='rgba(79,195,247,0.36)';ctx.fillRect(bkX-1,bkY+bkH-collected,bkW+2,collected);}
+    // dirt particles
+    let allS=true;
+    dirt.forEach(p=>{
+      if(!p.settled){allS=false;p.vy+=0.16;p.y+=p.vy;const yp=Math.min(1,(p.y-fTY)/(filterY-fTY));const mhw=(fTW/2)*(1-yp);const mx2=fTX+fTW/2;if(p.x<mx2-mhw+p.r)p.x=mx2-mhw+p.r;if(p.x>mx2+mhw-p.r)p.x=mx2+mhw-p.r;if(p.y>=filterY-p.r){p.y=filterY-p.r;p.settled=true;p.vy=0;}}
+      ctx.fillStyle=p.col; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    });
+    // drips
+    if((allS||t>95)&&!finished){flowing=true;if(t%22===0)drops.push({x:fNX+fNW/2,y:fNY+44,vy:1.3,r:4});if(collected<bkH-6)collected+=0.24;}
+    const liveDr=[]; drops.forEach(d=>{d.y+=d.vy;d.vy+=0.1;if(d.y<bkY+bkH+12){liveDr.push(d);ctx.fillStyle='rgba(79,195,247,0.78)';ctx.beginPath();ctx.ellipse(d.x,d.y,d.r*.7,d.r,0,0,Math.PI*2);ctx.fill();}});
+    drops.length=0;drops.push(...liveDr);
+    if(!finished) appRAFs[key]=requestAnimationFrame(frame);
+    if(flowing&&collected>=bkH-10&&!finished){finished=true;setTimeout(done,400);}
+  }
+  frame();
+}
+
+/* draw idle state for all 6 canvases */
+function initAppCanvases() {
+  // drink: glass + sugar cubes + still rod
+  (()=>{const {ctx}=gctx('drink');const gx=58,gy=16,gw=104,gh=116,waterY=gy+30;ctx.fillStyle='rgba(79,195,247,0.18)';ctx.beginPath();ctx.moveTo(gx,waterY);ctx.lineTo(gx-4,gy+gh);ctx.lineTo(gx+gw+4,gy+gh);ctx.lineTo(gx+gw,waterY);ctx.closePath();ctx.fill();ctx.strokeStyle='#90caf9';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(gx-9,gy);ctx.lineTo(gx,gy);ctx.lineTo(gx-4,gy+gh);ctx.lineTo(gx+gw+4,gy+gh);ctx.lineTo(gx+gw,gy);ctx.lineTo(gx+gw+9,gy);ctx.stroke();for(let i=0;i<5;i++){ctx.fillStyle='#f5e9be';ctx.strokeStyle='rgba(175,150,60,0.5)';ctx.lineWidth=0.8;ctx.fillRect(gx+12+i*16,gy-22,9,9);ctx.strokeRect(gx+12+i*16,gy-22,9,9);}ctx.strokeStyle='#8d6e63';ctx.lineWidth=3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(gx+gw/2,gy+18);ctx.lineTo(gx+gw/2,gy+gh-12);ctx.stroke();})();
+  // salt: pan with full water, sun
+  (()=>{const {ctx,W}=gctx('salt');ctx.fillStyle='#ffc107';ctx.beginPath();ctx.arc(W/2,26,13,0,Math.PI*2);ctx.fill();for(let i=0;i<8;i++){const a=i*Math.PI/4;ctx.strokeStyle='rgba(255,193,7,0.55)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(W/2+Math.cos(a)*15,26+Math.sin(a)*15);ctx.lineTo(W/2+Math.cos(a)*23,26+Math.sin(a)*23);ctx.stroke();}ctx.fillStyle='#eceff1';ctx.strokeStyle='#90a4ae';ctx.lineWidth=2;ctx.beginPath();ctx.rect(16,74,188,54);ctx.fill();ctx.stroke();ctx.fillStyle='rgba(79,195,247,0.45)';ctx.fillRect(18,76,184,44);})();
+  // pool: pool + scattered bacteria
+  (()=>{const {ctx,W}=gctx('pool');const g=ctx.createLinearGradient(8,26,8,116);g.addColorStop(0,'rgba(79,195,247,0.52)');g.addColorStop(1,'rgba(25,118,210,0.46)');ctx.fillStyle=g;ctx.strokeStyle='#29b6f6';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(8,26,204,90,6);ctx.fill();ctx.stroke();['#ef5350','#ff7043','#ffa726'].forEach((c,ci)=>{for(let i=0;i<5;i++){ctx.fillStyle=c;ctx.beginPath();ctx.arc(18+ci*68+i*12,42+Math.sin(i+ci)*30,3.5+Math.random(),0,Math.PI*2);ctx.fill();}});})();
+  // dye: blank fabric
+  (()=>{const {ctx,W,H}=gctx('dye');ctx.fillStyle='#f5f5f5';ctx.fillRect(0,0,W,H);ctx.strokeStyle='rgba(200,200,200,0.28)';ctx.lineWidth=1;for(let x=0;x<W;x+=12){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<H;y+=12){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}ctx.fillStyle='rgba(156,39,176,0.18)';ctx.beginPath();ctx.arc(W/2,H/2,7,0,Math.PI*2);ctx.fill();})();
+  // pill: glass + tablet above
+  (()=>{const {ctx}=gctx('pill');const gx=66,gy=10,gw=88,gh=122,waterY=gy+28;ctx.fillStyle='rgba(79,195,247,0.18)';ctx.fillRect(gx,waterY,gw,gy+gh-waterY);ctx.strokeStyle='#90caf9';ctx.lineWidth=2.5;ctx.strokeRect(gx,gy,gw,gh);ctx.strokeStyle='#b0bec5';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(gx-6,gy);ctx.lineTo(gx+gw+6,gy);ctx.stroke();ctx.fillStyle='#80cbc4';ctx.strokeStyle='#4db6ac';ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(gx+gw/2-18,gy-22,36,14,7);ctx.fill();ctx.stroke();ctx.strokeStyle='rgba(255,255,255,0.5)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(gx+gw/2,gy-20);ctx.lineTo(gx+gw/2,gy-10);ctx.stroke();})();
+  // filter: funnel with dirt + empty beaker
+  (()=>{const {ctx,W,H}=gctx('filter');const fTX=28,fTY=6,fTW=164,fNX=W/2-12,fNY=80,fNW=24,filterY=60;ctx.fillStyle='rgba(161,136,127,0.3)';ctx.beginPath();ctx.moveTo(fTX,fTY);ctx.lineTo(fNX,fNY);ctx.lineTo(fNX+fNW,fNY);ctx.lineTo(fTX+fTW,fTY);ctx.closePath();ctx.fill();ctx.strokeStyle='#90a4ae';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(fTX,fTY);ctx.lineTo(fNX,fNY);ctx.lineTo(fNX+fNW,fNY);ctx.lineTo(fTX+fTW,fTY);ctx.closePath();ctx.stroke();ctx.strokeStyle='#ffe0b2';ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(fTX+6,filterY);ctx.quadraticCurveTo(W/2,filterY+11,fTX+fTW-6,filterY);ctx.stroke();ctx.fillStyle='rgba(79,195,247,0.15)';ctx.strokeStyle='#90a4ae';ctx.lineWidth=2;ctx.beginPath();ctx.rect(fNX,fNY,fNW,44);ctx.fill();ctx.stroke();const bkX=fNX-18,bkY=H-50,bkW=fNW+36,bkH=44;ctx.strokeStyle='#90caf9';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(bkX,bkY);ctx.lineTo(bkX-2,bkY+bkH);ctx.lineTo(bkX+bkW+2,bkY+bkH);ctx.lineTo(bkX+bkW,bkY);ctx.stroke();})();
 }
 
 /* ══════════════════════════════════════
